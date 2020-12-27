@@ -1,0 +1,26 @@
+.bar{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 63px;
+    background-color: rgb(127, 219, 235);
+    border-top: solid rgb(149, 143, 143) 1px;
+    border-bottom: solid rgb(149, 143, 143) 1px;
+}
+
+.dropdown{
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.input {
+    flex-grow: 4;
+    width: 400px;
+    margin-left: 10px;
+}
+
+.buttonSearch {
+    flex-grow: 1;
+    margin-left: 10px;
+    margin-right: 10px;
+}

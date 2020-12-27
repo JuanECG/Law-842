@@ -1,0 +1,25 @@
+.top{
+    display: flex;
+    background-color: rgb(127, 219, 235);
+    padding-top: 5px;
+}
+
+.logo {
+    width: 60px;
+    height: 30px;
+    margin:10px;
+    background: rgba(255, 255, 255, 0.3); 
+    background-image: url(../images/favicon.ico);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;    
+}
+
+.title{
+    flex-grow: 4;
+    margin-left: 10px;
+}
+
+.buttonTop{
+    margin:10px 10px 0px 10px ;
+}
