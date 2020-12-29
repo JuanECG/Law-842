@@ -2,6 +2,7 @@
     display: flex;
     background-color: rgb(127, 219, 235);
     padding-top: 5px;
+    align-items: center;
 }
 
 .logo {
@@ -21,5 +22,6 @@
 }
 
 .buttonTop{
-    margin:10px 10px 0px 10px ;
+    margin: 10px 20px 15px 10px ;
+    
 }

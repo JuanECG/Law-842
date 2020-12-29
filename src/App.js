@@ -3,7 +3,7 @@ import { useState} from "react";
 import { Button } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import TopNavbar from './components/TopNavbar';
-import Filter from './components/search';
+import Filter from './components/filter';
 import Element from './components/element';
 import './styles/App.css';
 
@@ -12,19 +12,19 @@ const App = () => {
   const dummy = [
     {
       id: '1',
-      type: 'título',
+      type: 'TÍTULO',
       
       title: 'GENERALIDADES',
       child: [
         {
           id: '1',
-          type: 'capítulo',
+          type: 'CAPÍTULO',
       
           title: 'DEFINICIÓN Y ALCANCES',
           child: [
             {
               id: 1,
-              type: 'artículo',
+              type: 'ARTÍCULO',
       
               title: 'CONCEPTO DE INGENIERÍA',
               content: 'Se entiende por ingeniería toda aplicación de las ciencias físicas, químicas y matemáticas; de la técnica industrial y en general, del ingenio humano, a la utilización e invención sobre la materia.'
@@ -36,19 +36,19 @@ const App = () => {
     },
     {
       id: '2',
-      type: 'título',
+      type: 'TÍTULO ',
       
       title: 'GENERALIDADES',
       child: [
         {
           id: '1',
-          type: 'capítulo',
+          type: 'CAPÍTULO',
           
           title: 'DEFINICIÓN Y ALCANCES',
           child: [
             {
               id: 1,
-              type: 'artículo',
+              type: 'ARTÍCULO',
           
               title: 'CONCEPTO DE INGENIERÍA',
               content: ' Se entiende por ingeniería toda aplicación de las ciencias físicas, químicas y matemáticas; de la técnica industrial y en general, del ingenio humano, a la utilización e invención sobre la materia.'
@@ -60,7 +60,7 @@ const App = () => {
     },
     {
       id: 3,
-      type: 'artículo',
+      type: 'ARTÍCULO',
       
       title: 'CONCEPTO DE INGENIERÍA',
       content: ' Se entiende por ingeniería toda aplicación de las ciencias físicas, químicas y matemáticas; de la técnica industrial y en general, del ingenio humano, a la utilización e invención sobre la materia.',
@@ -79,10 +79,10 @@ const App = () => {
           type="primary"
           shape="round"
           className="add"
+          size="large"
           icon={<PlusCircleOutlined />} >
           Agregar Componentes
         </Button>
-
 
         {
         data.map(data=> (

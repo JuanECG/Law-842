@@ -1,11 +1,16 @@
-#x {
-    border-radius: 2rem;
+
+
+.edit {
+    margin-left: 80%;
+    margin-bottom: 10px;
 }
 
-#article {
-    font-weight: bold;
+.delete {
+    margin-left: 10px;
+    margin-bottom: 10px;
 }
 
-#pan p {
-    font-weight: normal;
+.ant-divider-horizontal {
+    margin-top: 0px;
+    margin-bottom: 10px;
 }

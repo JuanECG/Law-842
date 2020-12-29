@@ -13,6 +13,7 @@ const TopNavbar = () => {
                 type="primary"
                 shape="round"
                 className="buttonTop"
+                size="large"
                 icon={<FileSearchOutlined />} >
                 Reporte
             </Button>
@@ -20,6 +21,7 @@ const TopNavbar = () => {
                 type="primary"
                 shape="round"
                 className="buttonTop"
+                size="large"
                 icon={<BarChartOutlined />} >
                 Estadísticas
             </Button>
@@ -27,6 +29,7 @@ const TopNavbar = () => {
                 type="primary"
                 shape="round"
                 className="buttonTop"
+                size="large"
                 icon={<LoginOutlined />} >
                 Iniciar/cerrar sesión
             </Button>

@@ -39,6 +39,7 @@ const Filter = () => {
                 type="primary"
                 shape="round"
                 className="buttonSearch"
+                size="middle"
                 icon={<SearchOutlined />} >
                 Buscar
             </Button>
@@ -47,6 +48,7 @@ const Filter = () => {
                 type="primary"
                 shape="round"
                 className="buttonSearch"
+                size="middle"
                 icon={<RetweetOutlined />} >
                 Refrescar
             </Button>
