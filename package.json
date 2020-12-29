@@ -10,10 +10,28 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "bcrypt": "^5.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "multer": "^1.4.2",
+    "serve-favicon": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/express": "^4.17.9",
+    "@types/express-session": "^1.17.3",
+    "@types/jquery": "^3.5.5",
+    "@types/multer": "^1.4.5",
+    "@types/node": "^14.14.14",
+    "nodemon": "^2.0.6",
+    "prettier": "2.0.5"
   },
   "scripts": {
     "start": "react-scripts start",
+    "start-api": "nodemon api/api.js",
+    "build-dep": "npm install --production",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -35,5 +53,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://localhost:8000"
 }
