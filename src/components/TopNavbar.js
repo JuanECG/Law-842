@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { FileSearchOutlined, BarChartOutlined, LoginOutlined } from '@ant-design/icons';
 import '../styles/TopNavbar.css'
 
-const TopNavbar = () => {
+const TopNavbar = (props) => {
     return (
 
         <div className='top'>
@@ -14,6 +14,7 @@ const TopNavbar = () => {
                 shape="round"
                 className="buttonTop"
                 size="large"
+                onClick={props.triggerReport}
                 icon={<FileSearchOutlined />} >
                 Reporte
             </Button>
@@ -22,6 +23,7 @@ const TopNavbar = () => {
                 shape="round"
                 className="buttonTop"
                 size="large"
+                onClick={props.triggerStatistics}
                 icon={<BarChartOutlined />} >
                 Estadísticas
             </Button>

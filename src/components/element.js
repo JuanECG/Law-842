@@ -10,7 +10,6 @@ const Element = (props) => {
 
     // if element has any child, render each one of them
     if (props.data.hasOwnProperty("child")) {
-        { console.log(props.id); }
         return (
             <Collapse>
                 <Panel
@@ -83,16 +82,6 @@ const Element = (props) => {
                 </Panel>
 
             </Collapse >
-
-            // <Collapse >
-            //     <Panel id="article" header="Título 1: Generalidades" key="1">
-            //         <Collapse defaultActiveKey="1">
-            //             <Panel header="Capítulo 1: Definición y alcances " key="1">
-            //                 <p>Se entiende por ingeniería toda aplicación de las ciencias físicas, químicas y matemáticas; de la técnica industrial y en general, del ingenio humano, a la utilización e invención sobre la materia.</p>
-            //             </Panel>
-            //         </Collapse>
-            //     </Panel>
-            // </Collapse>
 
         )
     }
