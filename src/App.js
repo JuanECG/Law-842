@@ -6,6 +6,7 @@ import TopNavbar from './components/TopNavbar';
 import Filter from './components/filter';
 import Element from './components/element';
 import AddElement from './components/addElement';
+import Report from './components/report';
 import './styles/App.css';
 
 const App = () => {
@@ -76,10 +77,12 @@ const App = () => {
 
   const [report, setReport] = useState(false);
 
+  const [addElement, setAddElement] = useState(false);
+
   useEffect(() => {
     getResponse();
   }, [api]);
-  
+
   const getResponse = async () => {
     const response = await fetch(`/api`);
     const data = await response.text();
@@ -88,15 +91,15 @@ const App = () => {
     console.log(data);
   };
 
- 
+
   return (
     <div>
       <TopNavbar
-        triggerStatistics={()=> (setStatistics(!statistics))}
-        triggerReport={()=>(setReport(true))}
+        triggerStatistics={() => (setStatistics(true))}
+        triggerReport={() => (setReport(true))}
       />
       <Filter />
-      
+
       <div className="content">
 
         <Button
@@ -113,8 +116,9 @@ const App = () => {
           shape="round"
           className="add"
           size="large"
+          onClick={() => (setAddElement(true))}
           icon={<PlusCircleOutlined />} >
-          Agregar Componentes
+          Agregar Componente
         </Button>
 
         {
@@ -130,8 +134,13 @@ const App = () => {
       </div>
 
       <AddElement
+        visible={addElement}
+        onClose={() => (setAddElement(false))}
+      />
+
+      <Report
         visible={report}
-        onClose={()=> (setReport(false))}
+        onClose={() => (setReport(false))}
       />
 
     </div>
