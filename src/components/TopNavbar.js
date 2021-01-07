@@ -32,6 +32,7 @@ const TopNavbar = (props) => {
                 shape="round"
                 className="buttonTop"
                 size="large"
+                onClick={props.triggerLog}
                 icon={<LoginOutlined />} >
                 Iniciar/cerrar sesión
             </Button>

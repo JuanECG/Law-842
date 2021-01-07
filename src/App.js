@@ -7,6 +7,7 @@ import Filter from './components/filter';
 import Element from './components/element';
 import AddElement from './components/addElement';
 import Report from './components/report';
+import Log from './components/log';
 import './styles/App.css';
 
 const App = () => {
@@ -69,14 +70,19 @@ const App = () => {
     }
   ]
 
+  // backend useState variables
   const [data, setData] = useState(dummy);
 
   const [api, setApi] = useState("");
+  
+  // main navbar useState variables
+  const [report, setReport] = useState(false);
 
   const [statistics, setStatistics] = useState(false);
 
-  const [report, setReport] = useState(false);
+  const [log, setLog] = useState(false);  
 
+  // body useState variables
   const [addElement, setAddElement] = useState(false);
 
   useEffect(() => {
@@ -97,6 +103,7 @@ const App = () => {
       <TopNavbar
         triggerStatistics={() => (setStatistics(true))}
         triggerReport={() => (setReport(true))}
+        triggerLog={()=>(setLog(true))}
       />
       <Filter />
 
@@ -141,6 +148,12 @@ const App = () => {
       <Report
         visible={report}
         onClose={() => (setReport(false))}
+      />
+
+      <Log
+        title="log(in?out?)"
+        visible={log}
+        onClose={() => (setLog(false))}
       />
 
     </div>
