@@ -25,11 +25,11 @@ const Log = (props) => {
                     Cerrar
                 </Button>,
                 <Button
-                    key="generate"
+                    key="login"
                     type="primary"
                 // onClick={this.handleOk}
                 >
-                    Generar
+                    Login
                 </Button>,
             ]}
             width={400}
@@ -40,9 +40,9 @@ const Log = (props) => {
                 <Form.Item name="username" label="Usuario">
                     <Input />
                 </Form.Item>
-                <Form.Item name="username" label="Usuario">
+                <Form.Item name="password" label="Contraseña">
                     <Input.Password
-                        placeholder="input password"
+                        placeholder="*********"
                         iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                     />
                 </Form.Item>

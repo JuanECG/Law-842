@@ -1,10 +1,11 @@
 import "antd/dist/antd.css";
 import { useState, useEffect } from "react";
-import { Button } from 'antd';
+import { Button, Statistic } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import TopNavbar from './components/TopNavbar';
 import Filter from './components/filter';
-import Element from './components/element';
+import Main from './components/main';
+import Statistics from './components/statistic';
 import AddElement from './components/addElement';
 import Report from './components/report';
 import Log from './components/log';
@@ -74,13 +75,13 @@ const App = () => {
   const [data, setData] = useState(dummy);
 
   const [api, setApi] = useState("");
-  
+
   // main navbar useState variables
   const [report, setReport] = useState(false);
 
-  const [statistics, setStatistics] = useState(false);
+  const [main, setMain] = useState(true);
 
-  const [log, setLog] = useState(false);  
+  const [log, setLog] = useState(false);
 
   // body useState variables
   const [addElement, setAddElement] = useState(false);
@@ -100,46 +101,31 @@ const App = () => {
 
   return (
     <div>
+
       <TopNavbar
-        triggerStatistics={() => (setStatistics(true))}
+        triggerMain={() => (setMain(true))}
+        triggerStatistics={() => (setMain(false))}
         triggerReport={() => (setReport(true))}
-        triggerLog={()=>(setLog(true))}
+        triggerLog={() => (setLog(true))}
       />
+
       <Filter />
 
-      <div className="content">
+      {/* show main content or statistics content depending on
+          main variable status */}
+      {main
+      ?<Main
+        addElement={()=>(setAddElement(true))}
+        data={data}
+        api={api}
+      />
 
-        <Button
-          type="primary"
-          shape="round"
-          className="add"
-          size="large"
-          icon={<PlusCircleOutlined />} >
-          {api}
-        </Button>
+      :<Statistics/>
+      }
 
-        <Button
-          type="primary"
-          shape="round"
-          className="add"
-          size="large"
-          onClick={() => (setAddElement(true))}
-          icon={<PlusCircleOutlined />} >
-          Agregar Componente
-        </Button>
 
-        {
-          data.map(data => (
-            <Element
-              type={data.type}
-              title={data.title}
-              id={data.id}
-              number={data.number}
-              data={data} />
-          ))}
-
-      </div>
-
+      {/* modals */}
+      
       <AddElement
         visible={addElement}
         onClose={() => (setAddElement(false))}
@@ -151,7 +137,7 @@ const App = () => {
       />
 
       <Log
-        title="log(in?out?)"
+        title="Iniciar Sesión"
         visible={log}
         onClose={() => (setLog(false))}
       />

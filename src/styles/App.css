@@ -2,6 +2,9 @@
     margin: 50px 90px;
 }
 
+.column{
+    background-color: aqua;
+}
 .add{
     margin-bottom: 20px;
     width: 300px;

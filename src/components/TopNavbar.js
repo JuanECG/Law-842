@@ -1,14 +1,26 @@
 import React from 'react';
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
 import { FileSearchOutlined, BarChartOutlined, LoginOutlined } from '@ant-design/icons';
 import '../styles/TopNavbar.css'
+const { Title } = Typography;
+
 
 const TopNavbar = (props) => {
     return (
 
         <div className='top'>
-            <img className="logo"alt=""></img>
-            <h1 className="title">Aplicación Ley 842</h1>
+            <img className="logo" alt=""></img>
+            <Button
+                type="text"
+                shape="round"
+                className="title"
+                size="large"
+                onClick={props.triggerMain}
+            // icon={<FileSearchOutlined />}
+            >
+                <Title level={1} className="subtitle">Aplicación Ley 842</Title>
+
+            </Button>
             <Button
                 type="primary"
                 shape="round"
@@ -34,7 +46,7 @@ const TopNavbar = (props) => {
                 size="large"
                 onClick={props.triggerLog}
                 icon={<LoginOutlined />} >
-                Iniciar/cerrar sesión
+                Iniciar sesión
             </Button>
 
         </div>

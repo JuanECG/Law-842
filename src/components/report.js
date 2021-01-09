@@ -31,7 +31,7 @@ const Report = (props) => {
                     type="primary"
                     // onClick={this.handleOk}
                 >
-                    Generar
+                    Login
                 </Button>,
             ]}
             width={600}

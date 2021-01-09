@@ -19,6 +19,17 @@
 .title{
     flex-grow: 4;
     margin-left: 10px;
+    text-align: left;
+
+    font-weight: bold;
+    background-color: inherit;
+    display: flex;
+}
+
+.subtitle{
+    align-self: center;
+    vertical-align: middle;
+    
 }
 
 .buttonTop{
