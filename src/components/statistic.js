@@ -3,8 +3,11 @@ import { Row, Col } from 'antd';
 
 
 
-const Statsitics = () => {
+const Statsitics = (props) => {
 
+  if (props.isMainVisible) {
+    return null;
+  }
 
   return (
     <div className="content">

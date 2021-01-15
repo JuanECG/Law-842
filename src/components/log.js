@@ -12,7 +12,7 @@ const Log = (props) => {
 
     return (
         <Modal
-            title={props.title}
+            title="Iniciar Sesión"
             centered
             visible={props.visible}
             // onOk={}
