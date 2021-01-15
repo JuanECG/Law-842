@@ -4,7 +4,7 @@ import { Menu, Dropdown, Button, Input  } from 'antd';
 import { DownOutlined, UserOutlined, SearchOutlined, RetweetOutlined, RightOutlined } from '@ant-design/icons';
 import '../styles/Filter.css'
 
-const Filter = () => {
+const Filter = (props) => {
 
     const [option, setOption] = useState('Categoría');
     const items = [
@@ -24,6 +24,10 @@ const Filter = () => {
             ))}
         </Menu>
     );
+
+    if (!props.visible) {
+        return null;
+    }
 
     return (
         <div className="bar">

@@ -7,10 +7,10 @@
 
 .logo {
     width: 60px;
-    height: 30px;
+    height: 60px;
     margin:10px;
-    background: rgba(255, 255, 255, 0.3); 
-    background-image: url(../images/favicon.ico);
+    background: rgba(255, 255, 255);
+    background-image: url(../images/logo.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;    
