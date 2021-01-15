@@ -1,0 +1,14 @@
+Rutas:
+
+principal (todos los elementos) "GET": /api/elements
+con filtro:
+	categoria "GET": /api/<categoria>/
+	si tiene palabra "GET": /api/<categoria|elements>/<palabra a buscar>
+adicionar "POST": /api/elements  	'se manda como formulario, con o sin archivo'
+reportes:
+	hijos-> "GET": /api/reports/<categoria>
+	generar reporte (boton) "POST": /api/reports 'se manda como formulario las cosas que requiere el reporte'
+estadisticas "GET": /api/statics
+editar elemento "PUT": /api/elements/<_id>	'id de mongo'
+borrar elemento "DELETE": /api/elements/<_id> 'id de mongo'
+login "POST": /api/login 'se manda como formulario user y pswd'
