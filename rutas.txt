@@ -9,6 +9,6 @@ reportes:
 	hijos-> "GET": /api/reports/<categoria>
 	generar reporte (boton) "POST": /api/reports 'se manda como formulario las cosas que requiere el reporte'
 estadisticas "GET": /api/statics
-editar elemento "PUT": /api/elements/<_id>	'id de mongo'
-borrar elemento "DELETE": /api/elements/<_id> 'id de mongo'
+editar elemento "PUT": /api/<categoria>/<_id>	'id de mongo'
+borrar elemento "DELETE": /api/<categoria>/<_id> 'id de mongo'
 login "POST": /api/login 'se manda como formulario user y pswd'

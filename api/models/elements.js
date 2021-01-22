@@ -5,7 +5,7 @@ const ArticleSchema = mongoose.Schema({
     type: String,
     title: String,
     content: String,
-    paragraphs: {type: Array, default: null},
+    paragraphs: {type: Array, default: []},
     note: {type: String, default: ''}
 });
 

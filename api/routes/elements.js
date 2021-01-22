@@ -1,43 +1,31 @@
+// Imports
 const expresss = require('express');
 const router = expresss.Router();
 
 // Require Controllers Module
-var elements_controller = require('../controllers/elementsController');
+const elements_controller = require('../controllers/elementsController');
 
-router.get('/full', function(req, res) {
-    res.send("full");
-});
+// Routes
+router.get('/elements', elements_controller.full_law_GET);
+router.get('/elements/:filter', elements_controller.filter_law_GET);
+router.post('/elements', elements_controller.create_element);
 
-router.post('/full', elements_controller.full_law_GET);
+router.get('/title', elements_controller.full_law_GET);
+router.put('/title/:oid', elements_controller.title_UPDATE);
+//router.delete('/title/:oid', elements_controller.title_DELETE);
+router.get('/title/:filter', elements_controller.filter_title_GET);
 
-router.post('/title/search', elements_controller.title_GET);
+router.get('/chapter', elements_controller.chapter_GET);
+router.put('/chapter/:oid', elements_controller.chapter_UPDATE);
+//router.delete('/chapter/:oid', elements_controller.chapter_DELETE);
+router.get('/chapter/:filter', elements_controller.filter_chapter_GET);
 
-router.post('/chapter/search', elements_controller.chapter_GET);
+router.get('/article', elements_controller.article_GET);
+router.put('/article/:oid', elements_controller.article_UPDATE);
+//router.delete('/article/:oid', elements_controller.article_DELETE);
+router.get('/article/:filter', elements_controller.filter_article_GET);
 
-router.post('/article/search', elements_controller.article_GET);
-
-router.post('/title/create', elements_controller.title_POST);
-
-router.post('/chapter/create', elements_controller.chapter_POST);
-
-router.post('/article/create', elements_controller.article_POST);
-
-router.post('/comment/create', elements_controller.comment_POST);
-
-router.post('/title/update', elements_controller.title_UPDATE);
-
-router.post('/chapter/update', elements_controller.chapter_UPDATE);
-
-router.post('/article/update', elements_controller.article_UPDATE);
-
-router.post('/comment/update', elements_controller.comment_UPDATE);
-
-router.post('/title/delete', elements_controller.element_DELETE);
-
-router.post('/chapter/delete', elements_controller.element_DELETE);
-
-router.post('/article/delete', elements_controller.element_DELETE);
-
-router.post('/comment/delete', elements_controller.element_DELETE);
+router.put('/comment/:article', elements_controller.comment_UPDATE);
+//router.delete('/comment/:article', elements_controller.comment_DELETE);
 
 module.exports = router;

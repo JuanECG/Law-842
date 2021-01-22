@@ -109,16 +109,19 @@ const App = () => {
         triggerLog={() => (setLog(true))}
       />
 
-      <Filter visible={main}/>
+      <Filter />
 
-      <Main
+      {/* show main content or statistics content depending on
+          main variable status */}
+      {main
+      ?<Main
         addElement={()=>(setAddElement(true))}
         data={data}
         api={api}
-        visible={main}
       />
 
-      <Statistics isMainVisible={main}/>
+      :<Statistics/>
+      }
 
 
       {/* modals */}
@@ -134,6 +137,7 @@ const App = () => {
       />
 
       <Log
+        title="Iniciar Sesión"
         visible={log}
         onClose={() => (setLog(false))}
       />

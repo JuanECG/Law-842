@@ -1,5 +1,6 @@
 var Element = require('../models/elements');
-const { ObjectId } = require("bson");
+const { ObjectId } = require('bson');
+const { Mongoose } = require('mongoose');
 /* #region TODO
     * Validar que el resultado de a consulta no sea vacia
     * Modificar las consultas en mongo para que funcionen con articulos directamente bajo titulos
@@ -15,286 +16,395 @@ const PARAGRAPH = 'PARÁGRAFO';
 
 // #region SEARCH
 
-exports.full_law_GET = async function(req, res) {
-    try{
-        if(req.body.statement) // CHECK statement parameter precense
-        {
-            //query completa 
-            const queryResult = await Element.find( { $or: [{'title': {$regex : ".*"+req.body.statement+".*"} }, {'child.title': {$regex : ".*"+req.body.statement+".*"}}, {'child.child.title': {$regex : ".*"+req.body.statement+".*"}}, {'child.child.content': {$regex : ".*"+req.body.statement+".*"}} ]} );
-            var result = [];
-            queryResult.forEach(title => {
-                if(chapter.title.includes(req.body.statement)){
-                    result.push(title);
-                }else{
-                    title.child.forEach(chapter => {
-                        if (chapter.title.includes(req.body.statement)){
-                            result.push(chapter);
-                        }else{
-                            chapter.child.forEach(article => {
-                                if (article.title.includes(req.body.statement) || article.content.includes(req.body.statement)){
-                                    result.push(article);
-                                }
-                            });
-                        }
-                        
-                    });
-                }
-            });
-        }else
-        {
-            const result = await Element.find();
-            res.json(result);       
-        }
-    } catch(err){
-        res.json({ message: err})
-    }
+exports.full_law_GET = async function (req, res) {
+  try {
+    res.json(await Element.find());
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
 };
 
-exports.title_GET = async function(req, res) {
-    try{
-        if(req.body.statement) // CHECK statement parameter precense
+exports.filter_law_GET = async function (req, res) {
+  try {
+    //query completa
+    const queryResult = await Element.find({
+      $or: [
+        { title: { $regex: '.*' + req.params.filter + '.*' } },
+        { 'child.title': { $regex: '.*' + req.params.filter + '.*' } },
+        { 'child.child.title': { $regex: '.*' + req.params.filter + '.*' } },
         {
-            const result = await Element.find({title: {$regex : ".*"+req.body.statement+".*"}});
-            res.json(result);   
+          'child.child.content': { $regex: '.*' + req.params.filter + '.*' }
         }
-    } catch(err){
-        res.json({ message: err})
-    }
+      ]
+    });
+    const result = [];
+    queryResult.forEach((title) => {
+      if (title.title.includes(req.params.filter)) {
+        result.push(title);
+      } else {
+        title.child.forEach((chapter) => {
+          if (chapter.title.includes(req.params.filter)) {
+            result.push(chapter);
+          } else {
+            chapter.child.forEach((article) => {
+              if (
+                article.title.includes(req.params.filter) ||
+                article.content.includes(req.params.filter)
+              ) {
+                result.push(article);
+              }
+            });
+          }
+        });
+      }
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
 };
 
-exports.chapter_GET = async function(req, res) {
-    try{
-        if(req.body.statement) // CHECK statement parameter precense
-        {
-            const queryResult = await Element.find({'child.title': {$regex : ".*"+req.body.statement+".*"} });
-            var result = [];
-            //CHAPTERS DATA PROCESSING
-            queryResult.forEach(title => {
-                title.child.forEach(chapter => {
-                    if (chapter.title.includes(req.body.statement)){
-                        result.push(chapter);
-                    }
-                });
-            });
-            res.json(result);   
-        }
-    } catch(err){
-        res.json({ message: err})
-    }
+exports.filter_title_GET = async function (req, res) {
+  try {
+    const result = await Element.find({
+      title: { $regex: '.*' + req.params.filter + '.*' }
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
 };
 
-exports.article_GET = async function(req, res) {
-    try{
-        if(req.body.statement) // CHECK statement parameter precense
-        {
-            const queryResult = await Element.find({ $or: [{'child.child.title': {$regex : ".*"+req.body.statement+".*"}}, {'child.child.content': {$regex : ".*"+req.body.statement+".*"}}]});
-            var result = [];
-            //ARTICLES DATA PROCESSING
-            queryResult.forEach(title => {
-                title.child.forEach(chapter => {
-                    chapter.child.forEach(article => {
-                        if (article.title.includes(req.body.statement) || article.content.includes(req.body.statement)){
-                            result.push(article);
-                        }
-                    });
-                });
-            });
-            res.json(result);
+exports.chapter_GET = async function (req, res) {
+  try {
+    const queryResult = await Element.find({}, { child: 1 });
+    const chapters = [];
+    queryResult.forEach((title) => {
+      title.child.forEach((chapter) => chapters.push(chapter));
+    });
+    res.json(chapters);
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+};
+
+exports.filter_chapter_GET = async function (req, res) {
+  try {
+    const queryResult = await Element.find({
+      'child.title': { $regex: '.*' + req.params.filter + '.*' }
+    });
+    var result = [];
+    //CHAPTERS DATA PROCESSING
+    queryResult.forEach((title) => {
+      title.child.forEach((chapter) => {
+        if (chapter.title.includes(req.params.filter)) {
+          result.push(chapter);
         }
-    } catch(err){
-        res.json({ message: err})
-    }
+      });
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+};
+
+exports.article_GET = async function (req, res) {
+  try {
+    const queryResult = await Element.find({}, { child: 1 });
+    const articles = [];
+    queryResult.forEach((title) => {
+      title.child.forEach((chapter) => {
+        chapter.child.forEach((article) => articles.push(article));
+      });
+    });
+    res.json(articles);
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+};
+
+exports.filter_article_GET = async function (req, res) {
+  try {
+    const queryResult = await Element.find({
+      $or: [
+        { 'child.child.title': { $regex: '.*' + req.params.filter + '.*' } },
+        {
+          'child.child.content': { $regex: '.*' + req.params.filter + '.*' }
+        }
+      ]
+    });
+    var result = [];
+    //ARTICLES DATA PROCESSING
+    queryResult.forEach((title) => {
+      title.child.forEach((chapter) => {
+        chapter.child.forEach((article) => {
+          if (
+            article.title.includes(req.params.filter) ||
+            article.content.includes(req.params.filter)
+          ) {
+            result.push(article);
+          }
+        });
+      });
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
 };
 // #endregion
 
 // #region CREATE
+exports.create_element = async function (req, res) {
+  switch (req.body.tipo) {
+    case TITLE:
+      title_POST(req, res);
+      break;
+    case CHAPTER:
+      chapter_POST(req, res);
+      break;
+    case ARTICLE:
+      article_POST(req, res);
+      break;
+    case PARAGRAPH:
+      comment_POST(req, res);
+      break;
+    default:
+      res.status(400).send('Error!!!: Wrong element type');
+      break;
+  }
+};
 
-exports.title_POST = async function(req, res) {
-    
-    if(!req.body.title || !req.body.type)    res.send('Missing Parameters'); // CHECK parameters precense
-    if(req.body.type != TITLE)    res.send('Invalid title');
-    
-    var qTitles = await Element.find({},{id:1}).sort({id: -1});
-    const lastId = (qTitles.length > 0) ? qTitles[0].id + 1 : 1;
+async function title_POST(req, res) {
+  try {
+    if (!req.body.nombre) return res.status(400).send('Missing Parameters'); // CHECK parameters precense
+
+    var qTitles = await Element.find({}, { id: 1 }).sort({ id: -1 });
+    const lastId = qTitles.length > 0 ? qTitles[0].id + 1 : 1;
 
     var newTitle = new Element({
-        id: lastId,
-        type: TITLE,
-        title: req.body.title,
+      id: lastId,
+      type: TITLE,
+      title: req.body.nombre
     });
 
     newTitle.save(function (err) {
-        if (err) return handleError(err);
-        res.send('INSERTED new title');
+      if (err) throw err;
+      else res.send('INSERTED new title');
     });
-    
-};
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+}
 
-exports.chapter_POST = async function(req, res) {
+async function chapter_POST(req, res) {
+  try {
+    if (!req.body.nombre || !req.body.padre)
+      return res.status(400).send('Missing Parameters'); // CHECK parameters precense
 
-    if(!req.body.title || !req.body.type || !req.body.parent) res.send('Missing Parameters'); // CHECK parameters precense
-    if(req.body.type != CHAPTER)    res.send('Invalid article');
-    
-    var qTitle = await Element.findById(req.body.parent);
-    const lastId = (qTitle.child.length == 0) ? 1 : qTitle.child[qTitle.child.length-1].id + 1;
+    var qTitle = await Element.findById(req.body.padre);
+    const lastId =
+      qTitle.child.length > 0
+        ? qTitle.child[qTitle.child.length - 1].id + 1
+        : 1;
 
     qTitle.child.push({
-        id: lastId,
-        type: CHAPTER,
-        title: req.body.title
+      _id: new Mongoose.Types.ObjectId(),
+      id: lastId,
+      type: CHAPTER,
+      title: req.body.nombre
     });
 
     qTitle.save(function (err) {
-        if (err) return handleError(err);
-        res.send('INSERTED new Chapter');
+      if (err) throw err;
+      res.send('INSERTED new Chapter');
     });
-};
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+}
 
-exports.article_POST = async function(req, res) {
+async function article_POST(req, res) {
+  try {
+    if (!req.body.nombre || !req.body.padre || !req.body.cuerpo)
+      return res.status(400).send('Missing Parameters'); // CHECK parameters precense
 
-    if(!req.body.title || !req.body.type || !req.body.parent || !req.body.content) res.send('Missing Parameters'); // CHECK parameters precense
-    if(req.body.type != ARTICLE)    res.send('Invalid article');
-
-    const qTitle = await Element.findOne({'child._id': ObjectId(req.body.parent)});
-    const qChapter = qTitle.child.id(req.body.parent);
-    const lastId = (qChapter.child.length == 0) ? 1 : qChapter.child[qChapter.child.length-1].id + 1;
+    const qTitle = await Element.findOne({
+      'child._id': ObjectId(req.body.padre)
+    });
+    const qChapter = qTitle.child.id(req.body.padre);
+    const lastId =
+      qChapter.child.length > 0
+        ? qChapter.child[qChapter.child.length - 1].id + 1
+        : 1;
+    //*** update next articles IDs
 
     qChapter.child.push({
-        id: lastId,
-        type: ARTICLE,
-        title: req.body.title,
-        content: req.body.content
+      _id: new Mongoose.Types.ObjectId(),
+      id: lastId,
+      type: ARTICLE,
+      title: req.body.nombre,
+      content: req.body.cuerpo
     });
 
     qTitle.save(function (err) {
-        if (err) return handleError(err);
-        res.send('INSERTED new Article');
+      if (err) throw err;
+      res.send('INSERTED new Article');
     });
-    
-};
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+}
 
-exports.comment_POST = async function(req, res) {
-    if(!req.body.type || !req.body.parent || !req.body.content) res.send('Missing Parameters'); // CHECK parameters precense
-    if(req.body.type != PARAGRAPH)    res.send('Invalid paragraph');
+async function comment_POST(req, res) {
+  try {
+    if (!req.body.padre || !req.body.cuerpo)
+      return res.status(400).send('Missing Parameters'); // CHECK parameters precense
 
-    const qTitle = await Element.findOne({'child.child._id': ObjectId(req.body.parent)});
-    
-    qTitle.child.forEach(qChapter => {
-        const qArticle = qChapter.child.id(req.body.parent);
-        if (qArticle){
-            if (!qArticle.paragraphs) qArticle.paragraphs = [];
-            
-            qArticle.paragraphs.push(req.body.content);
-
-            qTitle.save(function (err) {
-                if (err) return handleError(err);
-                res.send('INSERTED new Paragraph');
-            });
-
-            return;
-        }
+    const qTitle = await Element.findOne({
+      'child.child._id': ObjectId(req.body.padre)
     });
-};
+
+    qTitle.child.forEach((qChapter) => {
+      const qArticle = qChapter.child.id(req.body.padre);
+      if (qArticle) {
+        qArticle.paragraphs.push(req.body.cuerpo);
+
+        qTitle.save(function (err) {
+          if (err) throw err;
+          res.send('INSERTED new Paragraph');
+        });
+
+        return;
+      }
+    });
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+}
 // #endregion
 
 // #region UPDATE
-exports.title_UPDATE = async function(req, res) {
-    if(!req.body.oid ||!req.body.title || !req.body.type)    res.send('Missing Parameters'); // CHECK parameters precense
-    if(req.body.type != TITLE)    res.send('Invalid title');
-    
-    var qTitle = await Element.findById(req.body.oid);
+exports.title_UPDATE = async function (req, res) {
+  try {
+    if (!req.params.oid || !req.body.nombre)
+      return res.status(400).send('Missing Parameters'); // CHECK parameters precense
 
-    qTitle.title = req.body.title;
+    const qTitle = await Element.findById(req.params.oid);
 
-    qTitle.save(function (err) {
-        if (err) return handleError(err);
-        res.send('Title UPDATED');
-    });
-};
-
-exports.chapter_UPDATE = async function(req, res) {
-    if(!req.body.oid ||!req.body.title || !req.body.type)    res.send('Missing Parameters'); // CHECK parameters precense
-    if(req.body.type != CHAPTER)    res.send('Invalid chapter');
-    
-    const qTitle = await Element.findOne({'child._id': ObjectId(req.body.oid)});
-    const qChapter = await qTitle.child.id(req.body.oid);
-
-    qChapter.title = req.body.title;
+    qTitle.title = req.body.nombre;
 
     qTitle.save(function (err) {
-        if (err) return handleError(err);
-        res.send('Chapter UPDATED');
+      if (err) throw err;
+      res.send('Title UPDATED');
     });
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
 };
 
-exports.article_UPDATE = async function(req, res) {
-    if(!req.body.oid ||!req.body.title || !req.body.type || !req.body.content || !req.body.note || !req.body.paragraphs)    res.send('Missing Parameters'); // CHECK parameters precense
-    if(req.body.type != ARTICLE)    res.send('Invalid article');
-    
-    const qTitle = await Element.findOne({'child.child._id': ObjectId(req.body.oid)});
-    
-    qTitle.child.forEach(qChapter => {
-        const qArticle = qChapter.child.id(req.body.oid);
-        if (qArticle){
-            
-            qArticle.title = req.body.title;
-            qArticle.type = ARTICLE;
-            qArticle.content = req.body.content;
-            if (req.body.paragraphs.length > 0) qArticle.paragraphs = req.body.paragraphs;
-            else qArticle.paragraphs = null;
-            qArticle.note = req.body.note;
+exports.chapter_UPDATE = async function (req, res) {
+  try {
+    if (!req.params.oid || !req.body.nombre)
+      return res.status(400).send('Missing Parameters'); // CHECK parameters precense
 
-            qTitle.save(function (err) {
-                if (err) return handleError(err);
-                res.send('Article UPDATED');
-            });
-
-            return;
-        }
+    const qTitle = await Element.findOne({
+      'child._id': ObjectId(req.params.oid)
     });
+    const qChapter = await qTitle.child.id(req.params.oid);
+
+    qChapter.title = req.body.nombre;
+
+    qTitle.save(function (err) {
+      if (err) throw err;
+      res.send('Chapter UPDATED');
+    });
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
 };
 
-exports.comment_UPDATE = async function(req, res) {
-    if(!req.body.oid || !req.body.type || !req.body.paragraphs)    res.send('Missing Parameters'); // CHECK parameters precense
-    if(req.body.type != PARAGRAPH)    res.send('Invalid Paragraphs');
-    
-    const qTitle = await Element.findOne({'child.child._id': ObjectId(req.body.oid)});
-    
-    qTitle.child.forEach(qChapter => {
-        const qArticle = qChapter.child.id(req.body.oid);
-        if (qArticle){
+exports.article_UPDATE = async function (req, res) {
+  try {
+    if (
+      !req.params.oid ||
+      !req.body.nombre ||
+      !req.body.cuerpo ||
+      !req.body.nota
+    )
+      return res.status(400).send('Missing Parameters'); // CHECK parameters precense
 
-            if (req.body.paragraphs.length > 0) qArticle.paragraphs = req.body.paragraphs;
-            else qArticle.paragraphs = null;
-
-            qTitle.save(function (err) {
-                if (err) return handleError(err);
-                res.send('Paragraphs UPDATED');
-            });
-
-            return;
-        }
+    const qTitle = await Element.findOne({
+      'child.child._id': ObjectId(req.params.oid)
     });
+
+    qTitle.child.forEach((qChapter) => {
+      const qArticle = qChapter.child.id(req.params.oid);
+      if (qArticle) {
+        qArticle.title = req.body.nombre;
+        qArticle.content = req.body.cuerpo;
+        qArticle.note = req.body.nota;
+
+        qTitle.save(function (err) {
+          if (err) throw err;
+          res.send('Article UPDATED');
+        });
+
+        return;
+      }
+    });
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+};
+
+exports.comment_UPDATE = async function (req, res) {
+  try {
+    if (!req.params.article || !req.body.comentarios)
+      return res.status(400).send('Missing Parameters'); // CHECK parameters precense
+
+    const qTitle = await Element.findOne({
+      'child.child._id': ObjectId(req.params.article)
+    });
+
+    qTitle.child.forEach((qChapter) => {
+      const qArticle = qChapter.child.id(req.params.article);
+      if (qArticle) {
+        if (req.body.comentarios.length > 0)
+          qArticle.paragraphs = req.body.comentarios;
+        else qArticle.paragraphs = null;
+
+        qTitle.save(function (err) {
+          if (err) throw err;
+          res.send('Paragraphs UPDATED');
+        });
+
+        return;
+      }
+    });
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
 };
 //#endregion
 
 // #region DELETE
-exports.element_DELETE = function(req, res) {
-    res.send('DELETE any element');
+exports.element_DELETE = function (req, res) {
+  res.send('DELETE any element');
 };
 // #endregion
 
 // #region MEDIA
-exports.media_POST = function(req, res) {
-    res.send('INSERT MEDIA');
+exports.media_POST = function (req, res) {
+  res.send('INSERT MEDIA');
 };
 
-exports.media_UPDATE = function(req, res) {
-    res.send('UPDATE MEDIA');
+exports.media_UPDATE = function (req, res) {
+  res.send('UPDATE MEDIA');
 };
 
-exports.media_DELETE = function(req, res) {
-    res.send('DELETE MEDIA');
+exports.media_DELETE = function (req, res) {
+  res.send('DELETE MEDIA');
 };
 // #endregion
 
