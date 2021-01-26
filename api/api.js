@@ -15,7 +15,7 @@ const upload = multer();
 // Mongoose connection
 const mongoose = require('mongoose');
 mongoose.connect(
-  process.env.DB_DEV_URI,
+  process.env.DB_URI,
   { useUnifiedTopology: true, useNewUrlParser: true },
   () => console.log('API Connected to Test DB')
 );
@@ -31,8 +31,10 @@ app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
 app.use(upload.none());
 
 // Import Routes
-const elementsRoutes = require('./routes/elements');
-app.use('/api', elementsRoutes);
+//const elementsRoutes = require('./routes/elements');
+const lawRoutes = require('./routes/law');
+//app.use('/api', elementsRoutes);
+app.use('/api', lawRoutes);
 
 app.listen(process.env.API_PORT, () => {
   console.log('Running API on port:', process.env.API_PORT);

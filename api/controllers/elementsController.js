@@ -1,6 +1,6 @@
 var Element = require('../models/elements');
 const { ObjectId } = require('bson');
-const { Mongoose } = require('mongoose');
+const Mongoose = require('mongoose');
 /* #region TODO
     * Validar que el resultado de a consulta no sea vacia
     * Modificar las consultas en mongo para que funcionen con articulos directamente bajo titulos
