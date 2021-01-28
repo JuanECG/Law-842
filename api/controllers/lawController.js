@@ -221,9 +221,9 @@ async function articlePOST(req, res) {
     const qArticle = await Article.findOne(
       { parent: mongoose.Types.ObjectId(req.body.padre) },
       { id: 1 }
-    ).sort({ id: -1 });
-    const lastId = qArticle ? qArticle.id + 1 : 1;
-
+	).sort({ id: -1 });
+    const lastId = qArticle ? qArticle.id + 1 : await getLastArticleID(req.body.padre);
+	
     const newArticle = new Article({
       _id: new mongoose.Types.ObjectId(),
       parent: mongoose.Types.ObjectId(req.body.padre),
@@ -235,11 +235,84 @@ async function articlePOST(req, res) {
       note: ''
     });
 
-    await newArticle.save();
-    res.send('INSERTED new article');
+	await newArticle.save();
+
+	updateArticles = await Article.find({
+		id: {$gte : lastId},
+		_id: {$ne: newArticle._id}
+	});
+
+	if (updateArticles){
+		updateArticles.forEach(uArticle =>{
+			uArticle.id += 1;
+			uArticle.save();
+		});
+	}
+	
+	res.send('INSERTED new article');
+	
   } catch (err) {
     res.status(400).json(err);
   }
+}
+
+async function getLastArticleID(chapterID){
+	const parentChapter = await Chapter.findById(chapterID);
+	var lastArticle = 0;
+
+	if (parentChapter){
+		var previousChapters = await Chapter.find({
+			parent: mongoose.Types.ObjectId(parentChapter.parent),
+			id: {$lt : parentChapter.id}
+		});
+		
+		lastArticle = await getLastFromChapter(previousChapters);
+		if (lastArticle <= 0) titleParent = await Title.findById(parentChapter.parent);
+	}else titleParent = parentChapter;
+	
+	if (lastArticle <= 0){
+		
+		previousTitles = await Title.find({
+			id: {$lt : titleParent.id}
+		});
+
+		var j;
+		for(j = previousTitles.length-1; j>= 0; j--){
+
+			previousChapters = await Chapter.find({
+				parent: mongoose.Types.ObjectId(previousTitles[j]._id),
+			});
+
+			if (previousChapters) lastArticle = await getLastFromChapter(previousChapters);
+			else lastArticle = await getLastFromTitle(previousTitles[j]._id);
+			if (lastArticle > 0) return lastArticle + 1;
+		}
+	}
+	
+	return lastArticle + 1;
+}
+
+async function getLastFromChapter(pChapters){
+	var i;
+	for(i = pChapters.length -1; i >= 0; i--){
+		//console.log(pChapters[i]);
+		
+		qArticle = await Article.findOne(
+			{ parent: mongoose.Types.ObjectId(pChapters[i]._id) },
+			{ id: 1 }
+		  ).sort({ id: -1 });
+		if (qArticle)  return qArticle.id;
+	}
+	return -1;
+}
+
+async function getLastFromTitle(titleID){
+	qArticle = await Article.findOne(
+		{ parent: mongoose.Types.ObjectId(titleID._id) },
+		{ id: 1 }
+	  ).sort({ id: -1 });
+	if (qArticle)  return qArticle.id;
+	else return -1;
 }
 
 // #endregion
