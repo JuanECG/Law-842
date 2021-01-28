@@ -330,9 +330,20 @@ module.exports.titleDELETE = async (req, res) => {
     }).lean();
     if (!chapter) {
       const deleted = await Title.findByIdAndDelete(req.params.oid);
-      if (deleted) res.send('Title DELETED');
-      else res.status(500).send('No Title found');
-    } else res.status(500).send('Error: Title has children');
+      if (deleted) {
+        let id = deleted.id;
+        let title;
+        do {
+          title = await Title.findOne({ id: id + 1 });
+          if (title) {
+            title.id -= 1;
+            await title.save();
+            id += 1;
+          }
+        } while (title);
+        res.send('Title DELETED');
+      } else res.status(500).send('No Title found');
+    } else res.status(500).send('Error: Title has child');
   } catch (err) {
     res.status(400).json(err);
   }
@@ -347,9 +358,23 @@ module.exports.chapterDELETE = async (req, res) => {
     }).lean();
     if (!article) {
       const deleted = await Chapter.findByIdAndDelete(req.params.oid);
-      if (deleted) res.send('Chapter DELETED');
-      else res.status(500).send('No Chapter found');
-    } else res.status(500).send('Error: Chapter has children');
+      if (deleted) {
+        let id = deleted.id;
+        let chapter;
+        do {
+          chapter = await Chapter.findOne({
+            id: id + 1,
+            parent: deleted.parent
+          });
+          if (chapter) {
+            chapter.id -= 1;
+            await chapter.save();
+            id += 1;
+          }
+        } while (chapter);
+        res.send('Chapter DELETED');
+      } else res.status(500).send('No Chapter found');
+    } else res.status(500).send('Error: Chapter has child');
   } catch (err) {
     res.status(400).json(err);
   }
@@ -360,8 +385,19 @@ module.exports.articleDELETE = async (req, res) => {
     if (!req.params.oid) return res.status(400).send('Missing Parameters'); // CHECK parameters precense
 
     const deleted = await Article.findByIdAndDelete(req.params.oid);
-    if (deleted) res.send('Article DELETED');
-    else res.status(500).send('No Article found');
+    if (deleted) {
+      let id = deleted.id;
+      let article;
+      do {
+        article = await Article.findOne({ id: id + 1 });
+        if (article) {
+          article.id -= 1;
+          await article.save();
+          id += 1;
+        }
+      } while (article);
+      res.send('Article DELETED');
+    } else res.status(500).send('No Article found');
   } catch (err) {
     res.status(400).json(err);
   }
