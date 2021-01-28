@@ -67,11 +67,23 @@ module.exports.filterLawGET = async (req, res) => {
 
 module.exports.filterTitleGET = async (req, res) => {
   try {
-    res.json(
-      await Title.find({
-        title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
-      }).lean()
-    );
+    const titles = await Title.find({
+      title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
+    }).lean();
+    for (const title of titles) {
+      title.child = await Chapter.find({ parent: title._id }).lean();
+      for (const chapter of title.child) {
+        chapter.child = await Article.find({
+          parent: chapter._id
+        }).lean();
+      }
+      title.child.push(
+        await Article.find({
+          parent: title._id
+        }).lean()
+      );
+    }
+    res.json(titles);
   } catch (err) {
     res.status(400).json(err);
   }
@@ -99,11 +111,15 @@ module.exports.chapterGET = async (req, res) => {
 
 module.exports.filterChapterGET = async (req, res) => {
   try {
-    res.json(
-      await Chapter.find({
-        title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
-      }).lean()
-    );
+    const chapters = await Chapter.find({
+      title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
+    }).lean();
+    for (const chapter of chapters) {
+      chapter.child = await Article.find({
+        parent: chapter._id
+      }).lean();
+    }
+    res.json(chapters);
   } catch (err) {
     res.status(400).json(err);
   }
