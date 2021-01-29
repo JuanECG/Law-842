@@ -221,9 +221,11 @@ async function articlePOST(req, res) {
     const qArticle = await Article.findOne(
       { parent: mongoose.Types.ObjectId(req.body.padre) },
       { id: 1 }
-	).sort({ id: -1 });
-    const lastId = qArticle ? qArticle.id + 1 : await getLastArticleID(req.body.padre);
-	
+    ).sort({ id: -1 });
+    const lastId = qArticle
+      ? qArticle.id + 1
+      : await getLastArticleID(req.body.padre);
+
     const newArticle = new Article({
       _id: new mongoose.Types.ObjectId(),
       parent: mongoose.Types.ObjectId(req.body.padre),
@@ -235,84 +237,80 @@ async function articlePOST(req, res) {
       note: ''
     });
 
-	await newArticle.save();
+    await newArticle.save();
 
-	updateArticles = await Article.find({
-		id: {$gte : lastId},
-		_id: {$ne: newArticle._id}
-	});
+    const updateArticles = await Article.find({
+      id: { $gte: lastId },
+      _id: { $ne: newArticle._id }
+    });
 
-	if (updateArticles){
-		updateArticles.forEach(uArticle =>{
-			uArticle.id += 1;
-			uArticle.save();
-		});
-	}
-	
-	res.send('INSERTED new article');
-	
+    if (updateArticles) {
+      updateArticles.forEach((uArticle) => {
+        uArticle.id += 1;
+        uArticle.save();
+      });
+    }
+
+    res.send('INSERTED new article');
   } catch (err) {
     res.status(400).json(err);
   }
 }
 
-async function getLastArticleID(chapterID){
-	const parentChapter = await Chapter.findById(chapterID);
-	var lastArticle = 0;
+async function getLastArticleID(chapterID) {
+  const parentChapter = await Chapter.findById(chapterID);
+  let lastArticle = 0;
+  let titleParent;
 
-	if (parentChapter){
-		var previousChapters = await Chapter.find({
-			parent: mongoose.Types.ObjectId(parentChapter.parent),
-			id: {$lt : parentChapter.id}
-		});
-		
-		lastArticle = await getLastFromChapter(previousChapters);
-		if (lastArticle <= 0) titleParent = await Title.findById(parentChapter.parent);
-	}else titleParent = parentChapter;
-	
-	if (lastArticle <= 0){
-		
-		previousTitles = await Title.find({
-			id: {$lt : titleParent.id}
-		});
+  if (parentChapter) {
+    const previousChapters = await Chapter.find({
+      parent: mongoose.Types.ObjectId(parentChapter.parent),
+      id: { $lt: parentChapter.id }
+    });
 
-		var j;
-		for(j = previousTitles.length-1; j>= 0; j--){
+    lastArticle = await getLastFromChapter(previousChapters);
+    if (lastArticle <= 0)
+      titleParent = await Title.findById(parentChapter.parent);
+  } else titleParent = parentChapter;
 
-			previousChapters = await Chapter.find({
-				parent: mongoose.Types.ObjectId(previousTitles[j]._id),
-			});
+  if (lastArticle <= 0) {
+    const previousTitles = await Title.find({
+      id: { $lt: titleParent.id }
+    });
 
-			if (previousChapters) lastArticle = await getLastFromChapter(previousChapters);
-			else lastArticle = await getLastFromTitle(previousTitles[j]._id);
-			if (lastArticle > 0) return lastArticle + 1;
-		}
-	}
-	
-	return lastArticle + 1;
+    for (const i in previousTitles.reverse()) {
+      const previousChapters = await Chapter.find({
+        parent: mongoose.Types.ObjectId(previousTitles[i]._id)
+      });
+
+      if (previousChapters)
+        lastArticle = await getLastFromChapter(previousChapters);
+      else lastArticle = await getLastFromTitle(previousTitles[i]._id);
+      if (lastArticle > 0) return lastArticle + 1;
+    }
+  }
+
+  return lastArticle + 1;
 }
 
-async function getLastFromChapter(pChapters){
-	var i;
-	for(i = pChapters.length -1; i >= 0; i--){
-		//console.log(pChapters[i]);
-		
-		qArticle = await Article.findOne(
-			{ parent: mongoose.Types.ObjectId(pChapters[i]._id) },
-			{ id: 1 }
-		  ).sort({ id: -1 });
-		if (qArticle)  return qArticle.id;
-	}
-	return -1;
+async function getLastFromChapter(pChapters) {
+  for (const i in pChapters.reverse()) {
+    const qArticle = await Article.findOne(
+      { parent: mongoose.Types.ObjectId(pChapters[i]._id) },
+      { id: 1 }
+    ).sort({ id: -1 });
+    if (qArticle) return qArticle.id;
+  }
+  return -1;
 }
 
-async function getLastFromTitle(titleID){
-	qArticle = await Article.findOne(
-		{ parent: mongoose.Types.ObjectId(titleID._id) },
-		{ id: 1 }
-	  ).sort({ id: -1 });
-	if (qArticle)  return qArticle.id;
-	else return -1;
+async function getLastFromTitle(titleID) {
+  const qArticle = await Article.findOne(
+    { parent: mongoose.Types.ObjectId(titleID._id) },
+    { id: 1 }
+  ).sort({ id: -1 });
+  if (qArticle) return qArticle.id;
+  return -1;
 }
 
 // #endregion
