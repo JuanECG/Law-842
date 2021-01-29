@@ -3,7 +3,6 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const favicon = require('serve-favicon');
-const session = require('express-session');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 // App
@@ -17,7 +16,7 @@ const mongoose = require('mongoose');
 mongoose.connect(
   process.env.DB_URI,
   { useUnifiedTopology: true, useNewUrlParser: true },
-  () => console.log('API Connected to Test DB')
+  () => console.log('API connected to DB')
 );
 
 // Load utilities
@@ -25,16 +24,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
-//app.use(session({ secret: 'LAW-session', resave: false, saveUninitialized: false }));
 
 // For non-file multipart forms
 app.use(upload.none());
 
 // Import Routes
-//const elementsRoutes = require('./routes/elements');
 const lawRoutes = require('./routes/law');
-//app.use('/api', elementsRoutes);
+const userRoutes = require('./routes/user');
 app.use('/api', lawRoutes);
+app.use('/api/user', userRoutes);
 
 app.listen(process.env.API_PORT, () => {
   console.log('Running API on port:', process.env.API_PORT);
