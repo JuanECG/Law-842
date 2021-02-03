@@ -31,8 +31,10 @@ app.use(upload.none());
 // Import Routes
 const lawRoutes = require('./routes/law');
 const userRoutes = require('./routes/user');
+const reportRoutes = require('./routes/report');
 app.use('/api', lawRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/report', reportRoutes);
 
 app.listen(process.env.API_PORT, () => {
   console.log('Running API on port:', process.env.API_PORT);
