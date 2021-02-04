@@ -1,11 +1,14 @@
 // Modules
+const mongoose = require('mongoose');
 const PdfPrinter = require('pdfmake');
 const path = require('path');
 // DB Models
 const Title = require('../models/Title');
 const Chapter = require('../models/Chapter');
 const Article = require('../models/Article');
+const Report = require('../models/Report');
 // #region TEMP-CONSTANTS
+const FULL = 'TODO';
 const TITLE = 'TÍTULO';
 const CHAPTER = 'CAPÍTULO';
 const ARTICLE = 'ARTÍCULO';
@@ -34,17 +37,49 @@ module.exports.makePDF = async (req, res) => {
       '\n\n'
     ]
   };
+  const IDs = [];
   switch (req.body.type) {
+    case FULL:
+      const titles = await Title.find().sort({ id: 1 }).lean();
+      for (const title of titles) {
+        printTitle(docDef, title);
+        const chapters = await Chapter.find({ parent: title._id })
+          .sort({ id: 1 })
+          .lean();
+        if (chapters.length)
+          for (const chapter of chapters) {
+            printChapter(docDef, chapter);
+            const articles = await Article.find({ parent: chapter._id })
+              .sort({ id: 1 })
+              .lean();
+            articles.forEach((article) => printArticle(docDef, article));
+          }
+        else {
+          const articles = await Article.find({ parent: title._id })
+            .sort({ id: 1 })
+            .lean();
+          articles.forEach((article) => printArticle(docDef, article));
+        }
+      }
+      break;
     case TITLE:
       for (const element of req.body.elements) {
+        IDs.push(element);
         const title = await Title.findById(element).lean();
         printTitle(docDef, title);
         const chapters = await Chapter.find({ parent: element })
           .sort({ id: 1 })
           .lean();
-        for (const chapter of chapters) {
-          printChapter(docDef, chapter);
-          const articles = await Article.find({ parent: chapter._id })
+        if (chapters.length)
+          for (const chapter of chapters) {
+            printChapter(docDef, chapter);
+            const articles = await Article.find({ parent: chapter._id })
+              .sort({ id: 1 })
+              .lean();
+            articles.forEach((article) => printArticle(docDef, article));
+          }
+        else {
+          const articles = await Article.find({ parent: title._id })
             .sort({ id: 1 })
             .lean();
           articles.forEach((article) => printArticle(docDef, article));
@@ -53,6 +88,7 @@ module.exports.makePDF = async (req, res) => {
       break;
     case CHAPTER:
       for (const element of req.body.elements) {
+        IDs.push(element);
         const chapter = await Chapter.findById(element).lean();
         printChapter(docDef, chapter);
         const articles = await Article.find({ parent: chapter._id })
@@ -62,12 +98,20 @@ module.exports.makePDF = async (req, res) => {
       }
       break;
     case ARTICLE:
-      for (const element of req.body.elements)
+      for (const element of req.body.elements) {
+        IDs.push(element);
         printArticle(docDef, await Article.findById(element).lean());
+      }
       break;
     default:
       return res.status(400).send('Bad report request');
   }
+  // Save report registry in BD
+  new Report({
+    _id: new mongoose.Types.ObjectId(),
+    category: req.body.type,
+    data: IDs
+  }).save();
   // Create PDF and send to client
   const pdfDoc = printer.createPdfKitDocument(docDef);
   pdfDoc.end();

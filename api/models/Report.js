@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 const ReportSchema = mongoose.Schema({
   _id: mongoose.Types.ObjectId,
   date: { type: Date, default: Date.now },
-  data: []
+  category: {
+    type: String,
+    enum: ['TÍTULO', 'CAPÍTULO', 'ARTÍCULO', 'TODO']
+  },
+  data: [mongoose.Types.ObjectId]
 });
 
 module.exports = mongoose.model('Report', ReportSchema, 'reports');

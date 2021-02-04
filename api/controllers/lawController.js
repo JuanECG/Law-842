@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 const Title = require('../models/Title');
 const Chapter = require('../models/Chapter');
 const Article = require('../models/Article');
+const Operation = require('../models/Operation');
 // #region TEMP-CONSTANTS
+const FULL = 'TODO';
 const TITLE = 'TÍTULO';
 const CHAPTER = 'CAPÍTULO';
 const ARTICLE = 'ARTÍCULO';
@@ -34,6 +36,12 @@ module.exports.fullLawGET = async (req, res) => {
       if (!title.child) title.child = [chapter];
       else title.child.push(chapter);
     });
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'SEARCH',
+      logged: req.header('auth-token') ? true : false,
+      category: FULL
+    }).save();
     res.json(titles);
   } catch (err) {
     res.status(400).json(err);
@@ -42,6 +50,7 @@ module.exports.fullLawGET = async (req, res) => {
 
 module.exports.filterLawGET = async (req, res) => {
   try {
+    const IDs = [];
     // Get DB filtered elements
     const articles = await Article.find({
       $or: [
@@ -56,9 +65,26 @@ module.exports.filterLawGET = async (req, res) => {
       title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
     }).lean();
     const data = [];
-    titles.forEach((title) => data.push(title));
-    chapters.forEach((chapter) => data.push(chapter));
-    articles.forEach((article) => data.push(article));
+    titles.forEach((title) => {
+      IDs.push(title._id);
+      data.push(title);
+    });
+    chapters.forEach((chapter) => {
+      IDs.push(chapter._id);
+      data.push(chapter);
+    });
+    articles.forEach((article) => {
+      IDs.push(article._id);
+      data.push(article);
+    });
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'SEARCH',
+      logged: req.header('auth-token') ? true : false,
+      category: FULL,
+      filter: req.params.filter,
+      data: IDs
+    }).save();
     res.json(data);
   } catch (err) {
     res.status(400).json(err);
@@ -67,22 +93,31 @@ module.exports.filterLawGET = async (req, res) => {
 
 module.exports.filterTitleGET = async (req, res) => {
   try {
+    const IDs = [];
     const titles = await Title.find({
       title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
     }).lean();
     for (const title of titles) {
+      IDs.push(title._id);
       title.child = await Chapter.find({ parent: title._id }).lean();
-      for (const chapter of title.child) {
+      for (const chapter of title.child)
         chapter.child = await Article.find({
           parent: chapter._id
         }).lean();
-      }
       title.child.push(
         await Article.find({
           parent: title._id
         }).lean()
       );
     }
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'SEARCH',
+      logged: req.header('auth-token') ? true : false,
+      category: TITLE,
+      filter: req.params.filter,
+      data: IDs
+    }).save();
     res.json(titles);
   } catch (err) {
     res.status(400).json(err);
@@ -103,6 +138,13 @@ module.exports.chapterGET = async (req, res) => {
       if (!chapter.child) chapter.child = [article];
       else chapter.child.push(article);
     });
+    chapters.forEach();
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'SEARCH',
+      logged: req.header('auth-token') ? true : false,
+      category: CHAPTER
+    }).save();
     res.json(chapters);
   } catch (err) {
     res.status(400).json(err);
@@ -111,14 +153,24 @@ module.exports.chapterGET = async (req, res) => {
 
 module.exports.filterChapterGET = async (req, res) => {
   try {
+    const IDs = [];
     const chapters = await Chapter.find({
       title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
     }).lean();
     for (const chapter of chapters) {
+      IDs.push(chapter._id);
       chapter.child = await Article.find({
         parent: chapter._id
       }).lean();
     }
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'SEARCH',
+      logged: req.header('auth-token') ? true : false,
+      category: CHAPTER,
+      filter: req.params.filter,
+      data: IDs
+    }).save();
     res.json(chapters);
   } catch (err) {
     res.status(400).json(err);
@@ -127,6 +179,12 @@ module.exports.filterChapterGET = async (req, res) => {
 
 module.exports.articleGET = async (req, res) => {
   try {
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'SEARCH',
+      logged: req.header('auth-token') ? true : false,
+      category: ARTICLE
+    }).save();
     res.json(await Article.find().lean());
   } catch (err) {
     res.status(400).json(err);
@@ -135,11 +193,20 @@ module.exports.articleGET = async (req, res) => {
 
 module.exports.filterArticleGET = async (req, res) => {
   try {
-    res.json(
-      await Chapter.find({
-        title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
-      }).lean()
-    );
+    const IDs = [];
+    const articles = await Chapter.find({
+      title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
+    }).lean();
+    articles.forEach((article) => IDs.push(article._id));
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'SEARCH',
+      logged: req.header('auth-token') ? true : false,
+      category: ARTICLE,
+      filter: req.params.filter,
+      data: IDs
+    }).save();
+    res.json(articles);
   } catch (err) {
     res.status(400).json(err);
   }
@@ -180,6 +247,13 @@ async function titlePOST(req, res) {
       title: req.body.nombre
     });
 
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'INSERT',
+      logged: true,
+      category: TITLE
+    }).save();
+
     await newTitle.save();
     res.send('INSERTED new title');
   } catch (err) {
@@ -205,6 +279,13 @@ async function chapterPOST(req, res) {
       type: CHAPTER,
       title: req.body.nombre
     });
+
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'INSERT',
+      logged: true,
+      category: CHAPTER
+    }).save();
 
     await newChapter.save();
     res.send('INSERTED new chapter');
@@ -250,6 +331,13 @@ async function articlePOST(req, res) {
         uArticle.save();
       });
     }
+
+    new Operation({
+      _id: new mongoose.Types.ObjectId(),
+      type: 'INSERT',
+      logged: true,
+      category: ARTICLE
+    }).save();
 
     res.send('INSERTED new article');
   } catch (err) {
@@ -326,6 +414,13 @@ module.exports.titleUPDATE = async (req, res) => {
     if (qTitle) {
       qTitle.title = req.body.nombre;
       await qTitle.save();
+      new Operation({
+        _id: new mongoose.Types.ObjectId(),
+        type: 'UPDATE',
+        logged: true,
+        category: TITLE,
+        data: [req.params.oid]
+      }).save();
       res.send('Title UPDATED');
     } else res.status(500).send('Title not found');
   } catch (err) {
@@ -342,6 +437,13 @@ module.exports.chapterUPDATE = async (req, res) => {
     if (qChapter) {
       qChapter.title = req.body.nombre;
       await qChapter.save();
+      new Operation({
+        _id: new mongoose.Types.ObjectId(),
+        type: 'UPDATE',
+        logged: true,
+        category: CHAPTER,
+        data: [req.params.oid]
+      }).save();
       res.send('Chapter UPDATED');
     } else res.status(500).send('Chapter not found');
   } catch (err) {
@@ -365,6 +467,13 @@ module.exports.articleUPDATE = async (req, res) => {
       qArticle.content = req.body.cuerpo;
       qArticle.note = req.body.nota;
       await qArticle.save();
+      new Operation({
+        _id: new mongoose.Types.ObjectId(),
+        type: 'UPDATE',
+        logged: true,
+        category: ARTICLE,
+        data: [req.params.oid]
+      }).save();
       res.send('Article UPDATED');
     } else res.status(500).send('Article not found');
   } catch (err) {
@@ -381,6 +490,13 @@ module.exports.commentUPDATE = async (req, res) => {
     if (qArticle) {
       qArticle.paragraphs = req.body.paragraphs;
       qArticle.save();
+      new Operation({
+        _id: new mongoose.Types.ObjectId(),
+        type: 'UPDATE',
+        logged: true,
+        category: ARTICLE,
+        data: [req.params.padre]
+      }).save();
       res.send('INSERTED new Paragraph');
     } else res.status(500).send('Article not found');
   } catch (err) {
@@ -412,6 +528,12 @@ module.exports.titleDELETE = async (req, res) => {
             id += 1;
           }
         } while (title);
+        new Operation({
+          _id: new mongoose.Types.ObjectId(),
+          type: 'DELETE',
+          logged: true,
+          category: TITLE
+        }).save();
         res.send('Title DELETED');
       } else res.status(500).send('No Title found');
     } else res.status(500).send('Error: Title has child');
@@ -443,6 +565,12 @@ module.exports.chapterDELETE = async (req, res) => {
             id += 1;
           }
         } while (chapter);
+        new Operation({
+          _id: new mongoose.Types.ObjectId(),
+          type: 'DELETE',
+          logged: true,
+          category: CHAPTER
+        }).save();
         res.send('Chapter DELETED');
       } else res.status(500).send('No Chapter found');
     } else res.status(500).send('Error: Chapter has child');
@@ -467,6 +595,12 @@ module.exports.articleDELETE = async (req, res) => {
           id += 1;
         }
       } while (article);
+      new Operation({
+        _id: new mongoose.Types.ObjectId(),
+        type: 'DELETE',
+        logged: true,
+        category: ARTICLE
+      }).save();
       res.send('Article DELETED');
     } else res.status(500).send('No Article found');
   } catch (err) {
