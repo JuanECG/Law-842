@@ -194,7 +194,7 @@ module.exports.articleGET = async (req, res) => {
 module.exports.filterArticleGET = async (req, res) => {
   try {
     const IDs = [];
-    const articles = await Chapter.find({
+    const articles = await Article.find({
       title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
     }).lean();
     articles.forEach((article) => IDs.push(article._id));
