@@ -609,3 +609,26 @@ module.exports.articleDELETE = async (req, res) => {
 };
 
 // #endregion
+
+module.exports.getList = async (req, res) => {
+  switch (req.params.category) {
+    case TITLE:
+      res.json(
+        await Title.find({}, { _id: 1, title: 1 }).sort({ id: 1 }).lean()
+      );
+      break;
+    case CHAPTER:
+      res.json(
+        await Chapter.find({}, { _id: 1, title: 1 }).sort({ id: 1 }).lean()
+      );
+      break;
+    case ARTICLE:
+      res.json(
+        await Article.find({}, { _id: 1, title: 1 }).sort({ id: 1 }).lean()
+      );
+      break;
+    default:
+      res.status(400).send('Bad category');
+      break;
+  }
+};
