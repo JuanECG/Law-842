@@ -8,7 +8,10 @@ adicionar "POST": /api/elements  	'se manda como formulario, con o sin archivo'
 reportes:
 	hijos-> "GET": /api/reports/<categoria>
 	generar reporte (boton) "POST": /api/reports 'se manda como formulario las cosas que requiere el reporte'
-estadisticas "GET": /api/statics
+lista de ids "GET": /api/list/<categoria>
+estadisticas "GET": /api/statistics
 editar elemento "PUT": /api/<categoria>/<_id>	'id de mongo'
 borrar elemento "DELETE": /api/<categoria>/<_id> 'id de mongo'
 login "POST": /api/login 'se manda como formulario user y pswd'
+generar PDF "POST": /api/report 'se manda tipo de reporte, y elementos (ids)'
+

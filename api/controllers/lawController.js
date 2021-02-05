@@ -17,9 +17,9 @@ const ARTICLE = 'ARTÍCULO';
 module.exports.fullLawGET = async (req, res) => {
   try {
     // Get DB elements
-    const articles = await Article.find().lean();
-    const chapters = await Chapter.find().lean();
-    const titles = await Title.find().lean();
+    const articles = await Article.find().sort({ id: 1 }).lean();
+    const chapters = await Chapter.find().sort({ id: 1 }).lean();
+    const titles = await Title.find().sort({ id: 1 }).lean();
     // Build Hierarchy struct
     articles.forEach((article) => {
       let chapter = chapters.find((chapter) =>
