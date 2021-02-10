@@ -138,7 +138,6 @@ module.exports.chapterGET = async (req, res) => {
       if (!chapter.child) chapter.child = [article];
       else chapter.child.push(article);
     });
-    chapters.forEach();
     new Operation({
       _id: new mongoose.Types.ObjectId(),
       type: 'SEARCH',
