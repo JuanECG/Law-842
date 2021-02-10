@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/javascripts/jquery-3.5.1.min.js"></script>
+    <script src="/javascripts/chart.js"></script>
+    <title>Statics Charts Test</title>
+</head>
+
+<body>
+    <div class="container mb-2">
+        <div class="row mt-3 text-center">
+            <div class="col">
+                <h1>Estadísticas del Sistema de Información</h1>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <h2>Número de consultas de toda la ley: <span id="fullSearchsNumber"></span></h3>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <h2>Cantidad de operaciones realizadas:</h2>
+                <canvas id="operationsChart"></canvas>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <h2>Busqueda de Elementos de la ley por categoría:</h2>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col text-center">
+                <h3>Títulos:</h3>
+                <canvas id="titleCountChart"></canvas>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col text-center">
+                <h3>Capítulos:</h3>
+                <canvas id="chapterCountChart"></canvas>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col text-center">
+                <h3>Artículos:</h3>
+                <canvas id="articleCountChart"></canvas>
+            </div>
+        </div>
+        <div class="row text-center mt-3">
+            <div class="col">
+                <h2>Reportes generados (PDFs): <span id="reportsNumber"></span></h2>
+                <canvas id="reportsChart"></canvas>
+            </div>
+            <div class="col">
+                <h2>Busquedas realizadas: <span id="searchsNumber"></span></h2>
+                <canvas id="searchsChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <script src="/javascripts/statistics.js"></script>
+</body>
+
+</html>
