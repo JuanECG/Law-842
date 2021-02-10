@@ -57,13 +57,19 @@ module.exports.filterLawGET = async (req, res) => {
         { title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' } },
         { content: { $regex: '.*' + req.params.filter + '.*', $options: '-i' } }
       ]
-    }).lean();
+    })
+      .sort({ id: 1 })
+      .lean();
     const chapters = await Chapter.find({
       title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
-    }).lean();
+    })
+      .sort({ parent: 1, id: 1 })
+      .lean();
     const titles = await Title.find({
       title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
-    }).lean();
+    })
+      .sort({ id: 1 })
+      .lean();
     const data = [];
     titles.forEach((title) => {
       IDs.push(title._id);
@@ -96,18 +102,26 @@ module.exports.filterTitleGET = async (req, res) => {
     const IDs = [];
     const titles = await Title.find({
       title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
-    }).lean();
+    })
+      .sort({ id: 1 })
+      .lean();
     for (const title of titles) {
       IDs.push(title._id);
-      title.child = await Chapter.find({ parent: title._id }).lean();
+      title.child = await Chapter.find({ parent: title._id })
+        .sort({ id: 1 })
+        .lean();
       for (const chapter of title.child)
         chapter.child = await Article.find({
           parent: chapter._id
-        }).lean();
+        })
+          .sort({ id: 1 })
+          .lean();
       title.child.push(
         await Article.find({
           parent: title._id
-        }).lean()
+        })
+          .sort({ id: 1 })
+          .lean()
       );
     }
     new Operation({
@@ -127,8 +141,8 @@ module.exports.filterTitleGET = async (req, res) => {
 module.exports.chapterGET = async (req, res) => {
   try {
     // Get DB elements
-    const articles = await Article.find().lean();
-    const chapters = await Chapter.find().lean();
+    const articles = await Article.find().sort({ id: 1 }).lean();
+    const chapters = await Chapter.find().sort({ parent: 1, id: 1 }).lean();
     // Build Hierarchy struct
     articles.forEach((article) => {
       const chapter = chapters.find((chapter) =>
@@ -155,12 +169,16 @@ module.exports.filterChapterGET = async (req, res) => {
     const IDs = [];
     const chapters = await Chapter.find({
       title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
-    }).lean();
+    })
+      .sort({ parent: 1, id: 1 })
+      .lean();
     for (const chapter of chapters) {
       IDs.push(chapter._id);
       chapter.child = await Article.find({
         parent: chapter._id
-      }).lean();
+      })
+        .sort({ id: 1 })
+        .lean();
     }
     new Operation({
       _id: new mongoose.Types.ObjectId(),
@@ -184,7 +202,7 @@ module.exports.articleGET = async (req, res) => {
       logged: req.header('auth-token') ? true : false,
       category: ARTICLE
     }).save();
-    res.json(await Article.find().lean());
+    res.json(await Article.find().sort({ id: 1 }).lean());
   } catch (err) {
     res.status(400).json(err);
   }
@@ -195,7 +213,9 @@ module.exports.filterArticleGET = async (req, res) => {
     const IDs = [];
     const articles = await Article.find({
       title: { $regex: '.*' + req.params.filter + '.*', $options: '-i' }
-    }).lean();
+    })
+      .sort({ id: 1 })
+      .lean();
     articles.forEach((article) => IDs.push(article._id));
     new Operation({
       _id: new mongoose.Types.ObjectId(),
