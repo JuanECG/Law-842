@@ -110,6 +110,7 @@ module.exports.makePDF = async (req, res) => {
   new Report({
     _id: new mongoose.Types.ObjectId(),
     category: req.body.type,
+    logged: req.header('auth-token') ? true : false,
     data: IDs
   }).save();
   // Create PDF and send to client

@@ -7,6 +7,7 @@ const ReportSchema = mongoose.Schema({
     type: String,
     enum: ['TÍTULO', 'CAPÍTULO', 'ARTÍCULO', 'TODO']
   },
+  logged: Boolean,
   data: [mongoose.Types.ObjectId]
 });
 

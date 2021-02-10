@@ -35,7 +35,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start-api": "nodemon api/api.js",
+    "start-api": "nodemon --config nodemon-cfg.json api/api.js",
     "build-dep": "npm install --production",
     "build": "react-scripts build",
     "test": "react-scripts test",
