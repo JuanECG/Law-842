@@ -1,13 +1,14 @@
 import "antd/dist/antd.css";
+
+import { trackPromise } from 'react-promise-tracker';
 import { useState, useEffect } from "react";
-import { Button, Statistic } from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons';
+
+import AddElement from './components/addElement';
+import Statistics from './components/statistic';
 import TopNavbar from './components/TopNavbar';
 import Filter from './components/filter';
-import Main from './components/main';
-import Statistics from './components/statistic';
-import AddElement from './components/addElement';
 import Report from './components/report';
+import Main from './components/main';
 import Log from './components/log';
 import './styles/App.css';
 
@@ -72,9 +73,9 @@ const App = () => {
   ]
 
   // backend useState variables
-  const [data, setData] = useState(dummy);
+  const [data, setData] = useState([]);
 
-  const [api, setApi] = useState("");
+  // const [api, setApi] = useState("");
 
   // main navbar useState variables
   const [report, setReport] = useState(false);
@@ -83,21 +84,25 @@ const App = () => {
 
   const [log, setLog] = useState(false);
 
+  const [url, setUrl] = useState('elements');
+
   // body useState variables
   const [addElement, setAddElement] = useState(false);
 
   useEffect(() => {
     getResponse();
-  }, [api]);
+  }, [url]);
 
   const getResponse = async () => {
-    const response = await fetch(`/api`);
-    const data = await response.text();
+    const response = await trackPromise(fetch(`/api/${url}`));
+    const data = await response.json();
 
-    setApi(data);
+    setData(data);
+    console.log(url);
     console.log(data);
   };
 
+  //trackPromise(getResponse());  
 
   return (
     <div>
@@ -109,7 +114,9 @@ const App = () => {
         triggerLog={() => (setLog(true))}
       />
 
-      <Filter />
+      <Filter
+      triggerFilter={(url) => (setUrl(url))}
+      visible={main} />
 
       {/* show main content or statistics content depending on
           main variable status */}
@@ -117,7 +124,6 @@ const App = () => {
       ?<Main
         addElement={()=>(setAddElement(true))}
         data={data}
-        api={api}
       />
 
       :<Statistics/>

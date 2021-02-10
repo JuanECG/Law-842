@@ -1,26 +1,44 @@
-import { useState, useEffect } from "react";
-import { Button } from 'antd';
+import { usePromiseTracker } from "react-promise-tracker";
 import { PlusCircleOutlined } from '@ant-design/icons';
+import Loader from 'react-loader-spinner';
+import { Button, Result } from 'antd';
+import { useState } from "react";
 import Element from './element';
 
 
 const Main = (props) => {
 
-    if (!props.visible) {
-        return null;
+    const data = props.data.length;
+
+    const { promiseInProgress } = usePromiseTracker();
+
+    if (!promiseInProgress && data === 0) {
+        return (
+            <Result
+                status="warning"
+                title="No se han encontrado elementos que coincidan con su búsqueda."
+            />
+        )
     }
 
-    return (
-        <div className="content">
+    else if (promiseInProgress) {
+        return(
+        <div
+            style={{
+                width: "100%",
+                height: "100",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+            }}
+        >
+            <Loader type="ThreeDots" color="#1b40e4" height="100" width="100" />
+        </div>)
+    }
 
-            <Button
-                type="primary"
-                shape="round"
-                className="add"
-                size="large"
-                icon={<PlusCircleOutlined />} >
-                {props.api}
-            </Button>
+    else {
+        return(
+        <div className="content">
 
             <Button
                 type="primary"
@@ -30,26 +48,22 @@ const Main = (props) => {
                 onClick={props.addElement}
                 icon={<PlusCircleOutlined />} >
                 Agregar Componente
-        </Button>
+            </Button>
 
-            {
-                props.data.map(data => (
-                    <Element
-                        type={data.type}
-                        title={data.title}
-                        id={data.id}
-                        number={data.number}
-                        data={data} />
-                ))}
+            {props.data.map(data => (
+                <Element
+                    type={data.type}
+                    title={data.title}
+                    id={data.id}
+                    number={data.number}
+                    data={data} />
+            ))}
 
         </div>
+        )
+    }
 
-
-
-    )
-
-
-
+    
 }
 
 export default Main

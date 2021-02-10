@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Collapse, Divider } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Collapse, Divider, Result } from 'antd';
 import '../styles/Element.css';
 
 
@@ -47,7 +47,8 @@ const Element = (props) => {
                 </Panel>
             </Collapse>
         )
-    } else {
+    }     
+    else {
         // render a single element
         return (
 
@@ -85,6 +86,7 @@ const Element = (props) => {
 
         )
     }
+    
 }
 
 export default Element;
