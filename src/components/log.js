@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Input, Modal, Form, Button } from 'antd';
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 
 const Log = (props) => {
@@ -10,34 +11,38 @@ const Log = (props) => {
         wrapperCol: { span: 12 },
     };
 
+    const getToken = async (data) => {      
+        const response = await axios.post('/api/user/login', data);
+        localStorage.setItem('auth-token', response.data );  
+        props.setLogin();      
+    }
+
+    const [form] = Form.useForm();
     return (
         <Modal
             title="Iniciar Sesión"
             centered
+            okText="Login"
+            cancelText="Cerrar"
             visible={props.visible}
-            // onOk={}
-            onCancel={props.onClose}
-            footer={[
-                <Button
-                    key="back"
-                    onClick={props.onClose}
-                >
-                    Cerrar
-                </Button>,
-                <Button
-                    key="login"
-                    type="primary"
-                // onClick={this.handleOk}
-                >
-                    Login
-                </Button>,
-            ]}
+            onCancel={props.close}
+            onOk={() => {
+                form
+                    .validateFields()
+                    .then(values => {
+                        getToken(values);
+                        props.close();
+                    })
+                    .catch(info => {
+                        console.log('Validate Failed:', info);
+                    });
+            }}            
             width={400}
         >
 
-            <Form {...layout}>
+            <Form {...layout} form={form}>
 
-                <Form.Item name="username" label="Usuario">
+                <Form.Item name="email" label="Usuario">
                     <Input />
                 </Form.Item>
                 <Form.Item name="password" label="Contraseña">

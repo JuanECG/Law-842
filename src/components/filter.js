@@ -1,13 +1,17 @@
-import React from 'react';
-import { useState } from "react";
+import { DownOutlined, SearchOutlined, RetweetOutlined, RightOutlined } from '@ant-design/icons';
 import { Menu, Dropdown, Button, Input } from 'antd';
-import { DownOutlined, UserOutlined, SearchOutlined, RetweetOutlined, RightOutlined } from '@ant-design/icons';
+import { useState, useEffect } from "react";
 import '../styles/Filter.css'
+import React from 'react';
 
 const Filter = (props) => {
 
     const [option, setOption] = useState('Toda la ley');
     const [filter, setFilter] = useState('');
+
+    useEffect (()=>{
+        setUrl(option)
+    }, [option])
 
     const items = [
         { key: 1, value: "Toda la ley", icon: <RightOutlined /> },
@@ -16,7 +20,7 @@ const Filter = (props) => {
         { key: 4, value: "Artículo", icon: <RightOutlined /> }
     ];
     const menu = (     
-            <Menu onClick={(e) => { setOption(e.key); setUrl(e.key) }}>
+            <Menu onClick={(e) => { setOption(e.key);  }}>
                 {items.map(item => (
                     <Menu.Item
                         key={item.value}
@@ -46,7 +50,7 @@ const Filter = (props) => {
                 props.triggerFilter(`chapter/${filter}`);
                 break;
             case 'Artículo':
-                props.triggerFilter(`artile/${filter}`);
+                props.triggerFilter(`article/${filter}`);
                 break;
             default:                
                 break;

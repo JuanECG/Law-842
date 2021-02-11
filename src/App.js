@@ -2,6 +2,7 @@ import "antd/dist/antd.css";
 
 import { trackPromise } from 'react-promise-tracker';
 import { useState, useEffect } from "react";
+import axios from 'axios';
 
 import AddElement from './components/addElement';
 import Statistics from './components/statistic';
@@ -77,6 +78,8 @@ const App = () => {
 
   // const [api, setApi] = useState("");
 
+  // clave token: auth-token val: post axios response...
+
   // main navbar useState variables
   const [report, setReport] = useState(false);
 
@@ -84,7 +87,9 @@ const App = () => {
 
   const [log, setLog] = useState(false);
 
-  const [url, setUrl] = useState('elements');
+  const [url, setUrl] = useState('elements'); 
+
+  const [login, setLogin] = useState(localStorage.getItem('auth-token')); 
 
   // body useState variables
   const [addElement, setAddElement] = useState(false);
@@ -93,7 +98,7 @@ const App = () => {
     getResponse();
   }, [url]);
 
-  const getResponse = async () => {
+  const getResponseOld = async () => {
     const response = await trackPromise(fetch(`/api/${url}`));
     const data = await response.json();
 
@@ -101,6 +106,12 @@ const App = () => {
     console.log(url);
     console.log(data);
   };
+
+  const getResponse = async () => {
+    const response = await trackPromise(axios(`/api/${url}`));
+    setData(response.data);
+    console.log(response.data);
+  }
 
   //trackPromise(getResponse());  
 
@@ -112,6 +123,13 @@ const App = () => {
         triggerStatistics={() => (setMain(false))}
         triggerReport={() => (setReport(true))}
         triggerLog={() => (setLog(true))}
+        login = {login}
+        logOut={()=> {
+          localStorage.removeItem('auth-token');          
+          setTimeout(() => {
+            setLogin(false);  
+          }, 1000);                    
+        }}     
       />
 
       <Filter
@@ -139,13 +157,14 @@ const App = () => {
 
       <Report
         visible={report}
-        onClose={() => (setReport(false))}
+        close={() => (setReport(false))}
       />
 
       <Log
         title="Iniciar Sesión"
-        visible={log}
-        onClose={() => (setLog(false))}
+        visible={log}        
+        setLogin = {() => (setLogin(true))}
+        close={() => (setLog(false))}        
       />
 
     </div>

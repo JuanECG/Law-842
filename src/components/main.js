@@ -32,7 +32,7 @@ const Main = (props) => {
                 alignItems: "center"
             }}
         >
-            <Loader type="ThreeDots" color="#1b40e4" height="100" width="100" />
+            <Loader type="MutatingDots" color="#1b40e4" height="100" width="100" />
         </div>)
     }
 

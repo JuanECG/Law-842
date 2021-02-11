@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select, Modal, Form, Button } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import axios from 'axios';
+const FileDownload = require('js-file-download');
 
 
 const Report = (props) => {
@@ -12,57 +13,72 @@ const Report = (props) => {
 
     const [comp, setComp] = useState(true);
 
+    const [items, setItems] = useState([]);
+
+    useEffect(()=>{
+        console.log(items);
+    }, [items])
+
+    const [form] = Form.useForm();
+
     return (
         <Modal
             title="Reporte"
             centered
             visible={props.visible}
-            // onOk={}
-            onCancel={props.onClose}
-            footer={[
-                <Button
-                    key="back"
-                    onClick={props.onClose}
-                >
-                    Cerrar
-                </Button>,
-                <Button
-                    key="generate"
-                    type="primary"
-                    // onClick={this.handleOk}
-                >
-                    Login
-                </Button>,
-            ]}
+            okText="Generar Reporte"
+            cancelText="Cerrar"            
+            onCancel={props.close}
             width={600}
+            onOk={() => {
+                form        
+                    .validateFields()            
+                    .then(async(values) => {
+                        const response = await axios.post(`/api/report`,values);
+                        FileDownload(response.data, 'report.pdf');              
+                        form.resetFields();
+                        props.close();
+                    })
+                    .catch(info => {
+                        console.log('Validate Failed:', info);
+                    });
+            }}      
         >
 
-            <Form {...layout}>
+            <Form {...layout} form={form}>
 
-                <Form.Item name="tipo" label="Tipo de componente">
+                <Form.Item name="type" label="Tipo de componente">
                     <Select
-                        defaultValue="Total de la ley"
-                        onChange={value => 
-                            { (value === 'Total de la ley') ? setComp(true) : setComp(false) }}
-                        
+                        defaultValue="TODO"
+                        onChange={async(value) => 
+                            {
+                                (value === 'TODO') ? setComp(true) : setComp(false);
+
+                                if (value === 'TODO') setComp(true)
+                                else {
+                                    setComp(false);
+                                    setItems((await axios(`/api/list/${value}`)).data)                                    
+                                }                                                                                       
+                            }}                        
                     >
-                        <Select.Option value="Total de la ley">Total de la ley</Select.Option>
-                        <Select.Option value="Título">Título</Select.Option>
-                        <Select.Option value="Capítulo">Capítulo</Select.Option>
-                        <Select.Option value="Artículo">Artículo</Select.Option>
+                        <Select.Option value="TODO" >Total de la ley</Select.Option>
+                        <Select.Option value="TÍTULO" >Título</Select.Option>
+                        <Select.Option value="CAPÍTULO" >Capítulo</Select.Option>
+                        <Select.Option value="ARTÍCULO" >Artículo</Select.Option>
                     </Select>
                 </Form.Item>
 
-                <Form.Item name="componente" label="Componentes a incluir" hidden={comp}>
+                <Form.Item name="elements" label="Componentes a incluir" hidden={comp}>
                     <Select
                         mode="multiple"
                         allowClear
                         placeholder="Seleccione los componentes"
                         //onChange={handleChange}
                     >
-                        <Select.Option value="prueba 1">prueba 1</Select.Option>
-                        <Select.Option value="prueba 2">prueba 2</Select.Option>
-                        <Select.Option value="prueba 3">prueba 3</Select.Option>
+                        {items.map(item=>(
+                            <Select.Option value={item._id}>{item.title}</Select.Option>
+                        ))}
+                        
                     </Select>
                 </Form.Item>
 
