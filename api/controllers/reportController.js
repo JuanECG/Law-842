@@ -118,6 +118,7 @@ module.exports.makePDF = async (req, res) => {
   pdfDoc.end();
   res.setHeader('Content-type', 'application/pdf');
   res.setHeader('Content-disposition', 'attachment; filename="report.pdf"');
+  res.setHeader('Content-Transfer-Encoding', 'Binary"');
   pdfDoc.pipe(res);
 };
 

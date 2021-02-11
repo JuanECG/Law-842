@@ -135,7 +135,8 @@ const Statsitics = (props) => {
             xAxes: [
               {
                 ticks: {
-                  beginAtZero: true
+                  beginAtZero: true,
+                  stepSize: 1
                 }
               }
             ]
@@ -193,7 +194,8 @@ const Statsitics = (props) => {
             xAxes: [
               {
                 ticks: {
-                  beginAtZero: true
+                  beginAtZero: true,
+                  stepSize: 1
                 }
               }
             ]
@@ -251,7 +253,8 @@ const Statsitics = (props) => {
             xAxes: [
               {
                 ticks: {
-                  beginAtZero: true
+                  beginAtZero: true,
+                  stepSize: 1
                 }
               }
             ]
