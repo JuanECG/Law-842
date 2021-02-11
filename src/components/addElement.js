@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Form, Radio, Upload, Input, Modal, Select, Button, Space } from 'antd';
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined, RetweetOutlined, RightOutlined } from '@ant-design/icons';
 import Layout from 'antd/lib/layout/layout';
+import axios from 'axios';
 
 
 const AddElement = (props) => {
@@ -24,6 +25,8 @@ const AddElement = (props) => {
   };
 
   const [content, setContent] = useState(true);
+  const [parent, setParent] = useState(true);
+  const [items, setItems] = useState([]);
   const [upload, setUpload] = useState(true);
   const [url, setUrl] = useState(false);
 
@@ -37,48 +40,90 @@ const AddElement = (props) => {
       setUrl(true);
     }
   }
-
+  const [form] = Form.useForm();
   return (
 
     <Modal
       title="Agregar Componente"
       centered
+      okText="Agregar"
+      cancelText="Cerrar"
       visible={props.visible}
-      // onOk={}
-      onCancel={props.onClose}
+      onCancel={props.close}
       width={800}
+      onOk={() => {
+        form
+          .validateFields()
+          .then(async (values) => {
+            console.log(await axios.post('/api/elements',
+              values,
+              { headers: { 'auth-token': localStorage.getItem('auth-token') } }));
+            form.resetFields();
+            props.refresh();            
+            props.close();
+          })
+          .catch(info => {
+            console.log('Validate Failed:', info);
+          });
+      }}
     >
-      <Form {...layout}>
+      <Form {...layout} form={form}>
 
-        <Form.Item name="tipo" label="Tipo de componente">
+        <Form.Item
+          name="tipo"
+          label="Tipo de componente"
+          rules={[{ required: true, message: "Seleccione tipo de componente" }]}>
           <Select
-            onChange={value => 
-              { (value === 'Artículo') ? setContent(false) : setContent(true) }}
+            onChange={async (value) => {
+              (value !== 'TÍTULO') ? setParent(false) : setParent(true);
+
+              if (value === 'CAPÍTULO') setItems((await axios(`/api/list/TÍTULO`)).data);
+              
+              if (value === 'ARTÍCULO'){
+                setContent(false);
+                setItems((await axios(`/api/list/CAPÍTULO`)).data);
+              }
+              else setContent(true);
+              
+
+            }}
           >
-            <Select.Option value="Total de la ley">Total de la ley</Select.Option>
-            <Select.Option value="Título">Título</Select.Option>
-            <Select.Option value="Capítulo">Capítulo</Select.Option>
-            <Select.Option value="Artículo">Artículo</Select.Option>
+            <Select.Option value="TÍTULO">Título</Select.Option>
+            <Select.Option value="CAPÍTULO">Capítulo</Select.Option>
+            <Select.Option value="ARTÍCULO">Artículo</Select.Option>
           </Select>
         </Form.Item>
 
-        <Form.Item name="padre" label="Componente padre">
+        <Form.Item
+          name="padre"
+          label="Componente padre"
+          hidden={parent}
+          rules={[{ required: !parent, message: "Seleccione el componente padre" }]}>
           <Select>
-            <Select.Option value="prueba 2">prueba 2</Select.Option>
+            {items.map((item) => (
+              <Select.Option value={item._id}>{item.title}</Select.Option>
+            ))}
           </Select>
         </Form.Item>
 
-        <Form.Item name="nombre" label="Nombre del componente">
+        <Form.Item
+          name="nombre"
+          label="Nombre del componente"
+          rules={[{ required: true, message: "Digite el nombre del componente" }]}>
           <Input />
         </Form.Item>
 
-        <Form.Item name="cuerpo" label="Cuerpo" hidden={content}>
+        <Form.Item
+          name="cuerpo"
+          label="Cuerpo"
+          hidden={content}
+          rules={[{ required: !content, message: "Digite el cuerpo del artículo" }]}>
           <Input.TextArea
             allowClear
             autoSize />
         </Form.Item>
 
-        <Form.Item name="media" label="Media">
+        {/* <Form.Item name="media" label="Media">
           <Radio.Group onChange={changeMediaUploadType} defaultValue="1">
             <Radio value="1">link</Radio>
             <Radio value="2">archivo</Radio>
@@ -132,7 +177,7 @@ const AddElement = (props) => {
               </Form.Item>
             </>
           )}
-        </Form.List>
+        </Form.List> */}
 
       </Form>
     </Modal>

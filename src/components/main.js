@@ -39,7 +39,7 @@ const Main = (props) => {
     else {
         return(
         <div className="content">
-
+            {props.login &&
             <Button
                 type="primary"
                 shape="round"
@@ -49,14 +49,17 @@ const Main = (props) => {
                 icon={<PlusCircleOutlined />} >
                 Agregar Componente
             </Button>
-
+            }
             {props.data.map(data => (
                 <Element
+                    _id={data._id}
                     type={data.type}
                     title={data.title}
                     id={data.id}
                     number={data.number}
-                    data={data} />
+                    data={data}
+                    triggerEdit = {props.triggerEdit}
+                    login={props.login} />
             ))}
 
         </div>

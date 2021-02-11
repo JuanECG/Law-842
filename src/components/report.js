@@ -13,10 +13,6 @@ const Report = (props) => {
 
   const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    console.log(items);
-  }, [items]);
-
   const [form] = Form.useForm();
 
   return (

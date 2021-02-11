@@ -9,6 +9,7 @@ import Statistics from './components/statistic';
 import TopNavbar from './components/TopNavbar';
 import Filter from './components/filter';
 import Report from './components/report';
+import Edit from './components/edit';
 import Main from './components/main';
 import Log from './components/log';
 import './styles/App.css';
@@ -92,7 +93,10 @@ const App = () => {
   const [login, setLogin] = useState(localStorage.getItem('auth-token')); 
 
   // body useState variables
+
   const [addElement, setAddElement] = useState(false);
+
+  const [edit, setEdit] = useState({_id:'',type:'',visible:false});
 
   useEffect(() => {
     getResponse();
@@ -111,6 +115,10 @@ const App = () => {
     const response = await trackPromise(axios(`/api/${url}`));
     setData(response.data);
     console.log(response.data);
+  }
+
+  const triggerEdit = (_id,type) =>{
+    //setEdit({_id:_id,type:type,visible:true});
   }
 
   //trackPromise(getResponse());  
@@ -142,6 +150,8 @@ const App = () => {
       ?<Main
         addElement={()=>(setAddElement(true))}
         data={data}
+        login = {login}
+        triggerEdit = {triggerEdit}
       />
 
       :<Statistics/>
@@ -152,7 +162,8 @@ const App = () => {
       
       <AddElement
         visible={addElement}
-        onClose={() => (setAddElement(false))}
+        close={() => (setAddElement(false))}
+        refresh={getResponse}
       />
 
       <Report
@@ -160,11 +171,17 @@ const App = () => {
         close={() => (setReport(false))}
       />
 
-      <Log
-        title="Iniciar Sesión"
+      <Log        
         visible={log}        
         setLogin = {() => (setLogin(true))}
         close={() => (setLog(false))}        
+      />
+
+      <Edit
+        edit = {edit}
+        visible={edit.visible}
+        close={() => (setEdit({_id:'',type:'',visible:false}))}        
+        refresh={getResponse}
       />
 
     </div>
