@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from "react";
 import { Form, Radio, Upload, Input, Modal, Select, Button, Space } from 'antd';
-import { InboxOutlined, MinusCircleOutlined, PlusOutlined, RetweetOutlined, RightOutlined } from '@ant-design/icons';
+import { InboxOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import axios from 'axios';
 
 
@@ -15,6 +15,7 @@ const AddElement = (props) => {
   const childLayout = {
     wrapperCol: { offset: 5, span: 16 },
   };
+
   const normFile = e => {
     console.log('Upload event:', e);
     if (Array.isArray(e)) {
@@ -54,11 +55,12 @@ const AddElement = (props) => {
         form
           .validateFields()
           .then(async (values) => {
+            console.log(values);
             console.log(await axios.post('/api/elements',
               values,
               { headers: { 'auth-token': localStorage.getItem('auth-token') } }));
             form.resetFields();
-            props.refresh();            
+            props.refresh();
             props.close();
           })
           .catch(info => {
@@ -77,13 +79,13 @@ const AddElement = (props) => {
               (value !== 'TÍTULO') ? setParent(false) : setParent(true);
 
               if (value === 'CAPÍTULO') setItems((await axios(`/api/list/TÍTULO`)).data);
-              
-              if (value === 'ARTÍCULO'){
+
+              if (value === 'ARTÍCULO') {
                 setContent(false);
                 setItems((await axios(`/api/list/CAPÍTULO`)).data);
               }
               else setContent(true);
-              
+
 
             }}
           >
@@ -122,13 +124,12 @@ const AddElement = (props) => {
             autoSize />
         </Form.Item>
 
-        {/* <Form.Item name="media" label="Media">
+        <Form.Item name="media" label="Media">
           <Radio.Group onChange={changeMediaUploadType} defaultValue="1">
             <Radio value="1">link</Radio>
             <Radio value="2">archivo</Radio>
           </Radio.Group>
         </Form.Item>
-
 
         <Form.Item
           name="dragger"
@@ -160,8 +161,7 @@ const AddElement = (props) => {
                 >
                   <Form.Item
                     {...field}
-                    name={[field.name, 'first']}
-                    fieldKey={[field.fieldKey, 'first']}
+                    name={[field.name]}                  
                     rules={[{ required: true, message: 'link requerido' }]}
                   >
                     <Input placeholder="Url" style={{ width:'200px' }}/>
@@ -176,7 +176,7 @@ const AddElement = (props) => {
               </Form.Item>
             </>
           )}
-        </Form.List> */}
+        </Form.List>
 
       </Form>
     </Modal>

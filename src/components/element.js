@@ -27,6 +27,7 @@ const Element = (props) => {
                   content: props.data.content,
                   parent: props.data.parent,
                   note: props.data.note,
+                  paragraphs:props.data.paragraphs,
                   visible: true
                 });
               }}
@@ -84,6 +85,7 @@ const Element = (props) => {
                   content: props.data.content,
                   parent: props.data.parent,
                   note: props.data.note,
+                  paragraphs:props.data.paragraphs,
                   visible: true
                 });
               }}
