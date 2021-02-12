@@ -1,15 +1,12 @@
 // Imports
 const express = require('express');
 const path = require('path');
-const multer = require('multer');
+const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 // App
 const app = express();
-
-// Multer
-const upload = multer();
 
 // Mongoose connection
 const mongoose = require('mongoose');
@@ -20,13 +17,9 @@ mongoose.connect(
 );
 
 // Load utilities
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(bodyParser.json());
+app.use('/media', express.static(path.join(__dirname, '../public/media')));
 app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
-
-// For non-file multipart forms
-app.use(upload.none());
 
 // Import Routes
 const lawRoutes = require('./routes/law');

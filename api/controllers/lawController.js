@@ -1,5 +1,6 @@
 // Modules
 const mongoose = require('mongoose');
+const fs = require('fs');
 // DB Models
 const Title = require('../models/Title');
 const Chapter = require('../models/Chapter');
@@ -254,8 +255,17 @@ module.exports.createElement = async (req, res) => {
 
 async function titlePOST(req, res) {
   try {
-    if (!req.body.nombre) return res.status(400).send('Missing Parameters'); // CHECK parameters precense
-
+    if (!req.body.nombre) {
+      if (req.file)
+        fs.unlink(req.file.path, (err) => {
+          if (err) throw err;
+          console.log(
+            'Deleted file by bad law title upload intent:',
+            req.file.filename
+          );
+        });
+      return res.status(400).send('Missing Parameters'); // CHECK parameters precense
+    }
     const qTitle = await Title.findOne({}, { id: 1 }).sort({ id: -1 });
     const lastId = qTitle ? qTitle.id + 1 : 1;
 
@@ -263,8 +273,23 @@ async function titlePOST(req, res) {
       _id: new mongoose.Types.ObjectId(),
       id: lastId,
       type: TITLE,
-      title: req.body.nombre
+      title: req.body.nombre,
+      media:
+        req.file && !req.body.url ? `/media/${req.file.filename}` : undefined,
+      url: req.body.url
     });
+
+    // Verify if url is present, so delete media in server
+    if (req.file && req.body.url)
+      fs.unlink(req.file.path, (err) => {
+        if (err) throw err;
+        console.log(
+          'Deleted file by url present in law title upload intent:',
+          req.file.filename
+        );
+      });
+
+    await newTitle.save();
 
     new Operation({
       _id: new mongoose.Types.ObjectId(),
@@ -273,7 +298,6 @@ async function titlePOST(req, res) {
       category: TITLE
     }).save();
 
-    await newTitle.save();
     res.send('INSERTED new title');
   } catch (err) {
     res.status(400).json(err);
@@ -282,8 +306,17 @@ async function titlePOST(req, res) {
 
 async function chapterPOST(req, res) {
   try {
-    if (!req.body.nombre || !req.body.padre)
+    if (!req.body.nombre || !req.body.padre) {
+      if (req.file)
+        fs.unlink(req.file.path, (err) => {
+          if (err) throw err;
+          console.log(
+            'Deleted file by bad law chapter upload intent:',
+            req.file.filename
+          );
+        });
       return res.status(400).send('Missing Parameters'); // CHECK parameters precense
+    }
 
     const qChapter = await Chapter.findOne(
       { parent: mongoose.Types.ObjectId(req.body.padre) },
@@ -296,8 +329,23 @@ async function chapterPOST(req, res) {
       parent: mongoose.Types.ObjectId(req.body.padre),
       id: lastId,
       type: CHAPTER,
-      title: req.body.nombre
+      title: req.body.nombre,
+      media:
+        req.file && !req.body.url ? `/media/${req.file.filename}` : undefined,
+      url: req.body.url
     });
+
+    // Verify if url is present, so delete media in server
+    if (req.file && req.body.url)
+      fs.unlink(req.file.path, (err) => {
+        if (err) throw err;
+        console.log(
+          'Deleted file by url present in law chapter upload intent:',
+          req.file.filename
+        );
+      });
+
+    await newChapter.save();
 
     new Operation({
       _id: new mongoose.Types.ObjectId(),
@@ -306,7 +354,6 @@ async function chapterPOST(req, res) {
       category: CHAPTER
     }).save();
 
-    await newChapter.save();
     res.send('INSERTED new chapter');
   } catch (err) {
     res.status(400).json(err);
@@ -315,8 +362,17 @@ async function chapterPOST(req, res) {
 
 async function articlePOST(req, res) {
   try {
-    if (!req.body.nombre || !req.body.padre || !req.body.cuerpo)
+    if (!req.body.nombre || !req.body.padre || !req.body.cuerpo) {
+      if (req.file)
+        fs.unlink(req.file.path, (err) => {
+          if (err) throw err;
+          console.log(
+            'Deleted file by bad law article upload intent:',
+            req.file.filename
+          );
+        });
       return res.status(400).send('Missing Parameters'); // CHECK parameters precense
+    }
 
     const qArticle = await Article.findOne(
       { parent: mongoose.Types.ObjectId(req.body.padre) },
@@ -334,8 +390,21 @@ async function articlePOST(req, res) {
       title: req.body.nombre,
       content: req.body.cuerpo,
       paragraphs: [],
-      note: ''
+      note: '',
+      media:
+        req.file && !req.body.url ? `/media/${req.file.filename}` : undefined,
+      url: req.body.url
     });
+
+    // Verify if url is present, so delete media in server
+    if (req.file && req.body.url)
+      fs.unlink(req.file.path, (err) => {
+        if (err) throw err;
+        console.log(
+          'Deleted file by url present in law article upload intent:',
+          req.file.filename
+        );
+      });
 
     await newArticle.save();
 

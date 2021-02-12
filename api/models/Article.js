@@ -8,7 +8,9 @@ const ArticleSchema = mongoose.Schema({
   title: String,
   content: String,
   paragraphs: [String],
-  note: String
+  note: String,
+  media: String,
+  url: String
 });
 
 module.exports = mongoose.model('Article', ArticleSchema, 'articles');

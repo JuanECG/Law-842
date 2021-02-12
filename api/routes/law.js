@@ -3,11 +3,12 @@ const router = require('express').Router();
 // Controllers
 const lawController = require('../controllers/lawController');
 const verifyToken = require('../server/verifyToken');
+const uploadFile = require('../server/uploadFile');
 
 // Routes
 router.get('/elements', lawController.fullLawGET);
 router.get('/elements/:filter', lawController.filterLawGET);
-router.post('/elements', verifyToken, lawController.createElement);
+router.post('/elements', verifyToken, uploadFile, lawController.createElement);
 
 router.get('/title', lawController.fullLawGET);
 router.put('/title/:oid', verifyToken, lawController.titleUPDATE);

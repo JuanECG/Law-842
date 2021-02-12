@@ -5,7 +5,9 @@ const ChapterSchema = mongoose.Schema({
   parent: mongoose.Types.ObjectId,
   id: Number,
   type: String,
-  title: String
+  title: String,
+  media: String,
+  url: String
 });
 
 module.exports = mongoose.model('Chapter', ChapterSchema, 'chapters');
