@@ -1,7 +1,7 @@
-import React from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button, Collapse, Divider, Result } from 'antd';
 import '../styles/Element.css';
+import React from 'react';
 
 
 const { Panel } = Collapse;
@@ -12,18 +12,24 @@ const Element = (props) => {
     if (props.data.hasOwnProperty("child")) {
         return (
             <Collapse>
-                <Panel                   
+                <Panel
                     header={
-                        props.type + ' ' +
-                        props.id + ': ' +
-                        props.title}
-                    >
+                        props.data.type + ' ' +
+                        props.data.id + ': ' +
+                        props.data.title}
+                >
 
                     {props.login &&
-                    <Button                                                    
+                        <Button
                             type="link"
                             className="edit"
-                            onClick={props.triggerEdit(props._id,props.type)}
+                            onClick={() => {
+                                props.setEdit({
+                                    _id: props.data._id, type: props.data.type, title: props.data.title,
+                                    content: props.data.content, parent: props.data.parent,
+                                    note: props.data.note, visible: true
+                                })
+                            }}
                             icon={<EditOutlined />} >
                             Editar
                     </Button>
@@ -40,14 +46,10 @@ const Element = (props) => {
                     }
 
                     {props.data['child'].map(childData => (
-                        <Element
-                            _id={childData._id}
-                            type={childData.type}
-                            title={childData.title}
-                            id={childData.id}
+                        <Element                           
                             data={childData}
                             login={props.login}
-                            triggerEdit = {props.triggerEdit} />
+                            setEdit={props.setEdit} />
                     ))}
 
                     <p>{props.data.content}</p>
@@ -60,17 +62,23 @@ const Element = (props) => {
         return (
 
             <Collapse>
-                <Panel                    
+                <Panel
                     header={
-                        props.type + ' ' +
-                        props.id + ': ' +
-                        props.title}
+                        props.data.type + ' ' +
+                        props.data.id + ': ' +
+                        props.data.title}
                 >
                     {props.login &&
-                    <Button                                        
+                        <Button
                             type="link"
                             className="edit"
-                            onClick={props.triggerEdit(props._id,props.type)}
+                            onClick={() => {
+                                props.setEdit({
+                                    _id: props.data._id, type: props.data.type, title: props.data.title,
+                                    content: props.data.content, parent: props.data.parent,
+                                    note: props.data.note, visible: true
+                                })
+                            }}
                             icon={<EditOutlined />} >
                             Editar
                     </Button>
@@ -88,29 +96,26 @@ const Element = (props) => {
                     <Divider className="dividier" />
 
                     <p>{props.data.content}</p>
-                    
+
 
                     {props.data.note &&
                         <div>
                             <hr />
                             <p style={{ "font-style": "italic" }}>
                                 NOTA: {props.data.note}
-                            </p>                          
+                            </p>
                         </div>
                     }
                     {props.data.paragraphs &&
-                        <div>                            
+                        <div>
                             {props.data.paragraphs.map((paragraph, index) => (
                                 <div>
                                     <hr />
                                     <p>Parágrafo {index + 1}: {paragraph} </p>
                                 </div>
-                            ))}                            
+                            ))}
                         </div>
                     }
-
-
-
 
                 </Panel>
 

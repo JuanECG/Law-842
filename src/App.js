@@ -16,68 +16,9 @@ import './styles/App.css';
 
 const App = () => {
 
-  const dummy = [
-    {
-      id: '1',
-      type: 'TÍTULO',
-
-      title: 'GENERALIDADES',
-      child: [
-        {
-          id: '1',
-          type: 'CAPÍTULO',
-
-          title: 'DEFINICIÓN Y ALCANCES',
-          child: [
-            {
-              id: 1,
-              type: 'ARTÍCULO',
-
-              title: 'CONCEPTO DE INGENIERÍA',
-              content: 'Se entiende por ingeniería toda aplicación de las ciencias físicas, químicas y matemáticas; de la técnica industrial y en general, del ingenio humano, a la utilización e invención sobre la materia.'
-            }
-          ]
-        }
-
-      ]
-    },
-    {
-      id: '2',
-      type: 'TÍTULO ',
-
-      title: 'GENERALIDADES',
-      child: [
-        {
-          id: '1',
-          type: 'CAPÍTULO',
-
-          title: 'DEFINICIÓN Y ALCANCES',
-          child: [
-            {
-              id: 1,
-              type: 'ARTÍCULO',
-
-              title: 'CONCEPTO DE INGENIERÍA',
-              content: ' Se entiende por ingeniería toda aplicación de las ciencias físicas, químicas y matemáticas; de la técnica industrial y en general, del ingenio humano, a la utilización e invención sobre la materia.'
-            }
-          ]
-        }
-
-      ]
-    },
-    {
-      id: 3,
-      type: 'ARTÍCULO',
-
-      title: 'CONCEPTO DE INGENIERÍA',
-      content: ' Se entiende por ingeniería toda aplicación de las ciencias físicas, químicas y matemáticas; de la técnica industrial y en general, del ingenio humano, a la utilización e invención sobre la materia.',
-    }
-  ]
 
   // backend useState variables
   const [data, setData] = useState([]);
-
-  // const [api, setApi] = useState("");
 
   // clave token: auth-token val: post axios response...
 
@@ -88,104 +29,135 @@ const App = () => {
 
   const [log, setLog] = useState(false);
 
-  const [url, setUrl] = useState('elements'); 
+  const [url, setUrl] = useState('elements');
 
-  const [login, setLogin] = useState(localStorage.getItem('auth-token')); 
+  const [login, setLogin] = useState(localStorage.getItem('auth-token'));
 
   // body useState variables
 
   const [addElement, setAddElement] = useState(false);
 
-  const [edit, setEdit] = useState({_id:'',type:'',visible:false});
+  const [edit, setEdit] = useState({
+    _id: '', type: '', title: '',
+    content: '', parent: '', note: '',
+    visible: false
+  });
+
+  const [itemsEdit, setItemsEdit] = useState([]);
+
+  const [parentEdit, setParentEdit] = useState('');
 
   useEffect(() => {
     getResponse();
   }, [url]);
 
-  const getResponseOld = async () => {
-    const response = await trackPromise(fetch(`/api/${url}`));
-    const data = await response.json();
+  useEffect(async () => {
+    //console.log(edit);
+    if (edit.type === 'CAPÍTULO') {
+      axios(`/api/list/TÍTULO`).then(
+        data => {
+          setItemsEdit(data);
+          console.log(itemsEdit);
+        }
+      )
+      // setItemsEdit((await axios(`/api/list/TÍTULO`)).data);
+    }  
+    else if (edit.type === 'ARTÍCULO'){
+      axios(`/api/list/CAPÍTULO`).then(
+        data => {
+          setItemsEdit(data);
+          console.log(itemsEdit);
+        }
+      )
+    }
+    // else if (edit.type === 'ARTÍCULO') setItemsEdit((await axios(`/api/list/CAPÍTULO`)).data); 
+  }, [edit]);
 
-    setData(data);
-    console.log(url);
-    console.log(data);
-  };
+useEffect(() => {
+  setParentEdit(edit.parent);
+  console.log(edit.parent);
+  console.log(itemsEdit);
+}, [itemsEdit])
 
-  const getResponse = async () => {
-    const response = await trackPromise(axios(`/api/${url}`));
-    setData(response.data);
-    console.log(response.data);
-  }
+const getResponse = async () => {
+  const response = await trackPromise(axios(`/api/${url}`));
+  setData(response.data);
+  console.log(response.data);
+}
 
-  const triggerEdit = (_id,type) =>{
-    //setEdit({_id:_id,type:type,visible:true});
-  }
+const triggerEdit = (_id, type) => {
+  //setEdit({_id:_id,type:type,visible:true});
+}
 
-  //trackPromise(getResponse());  
+return (
+  <div>
 
-  return (
-    <div>
+    <TopNavbar
+      triggerMain={() => (setMain(true))}
+      triggerStatistics={() => (setMain(false))}
+      triggerReport={() => (setReport(true))}
+      triggerLog={() => (setLog(true))}
+      login={login}
+      logOut={() => {
+        localStorage.removeItem('auth-token');
+        setTimeout(() => {
+          setLogin(false);
+        }, 1000);
+      }}
+    />
 
-      <TopNavbar
-        triggerMain={() => (setMain(true))}
-        triggerStatistics={() => (setMain(false))}
-        triggerReport={() => (setReport(true))}
-        triggerLog={() => (setLog(true))}
-        login = {login}
-        logOut={()=> {
-          localStorage.removeItem('auth-token');          
-          setTimeout(() => {
-            setLogin(false);  
-          }, 1000);                    
-        }}     
-      />
-
-      <Filter
+    <Filter
       triggerFilter={(url) => (setUrl(url))}
       visible={main} />
 
-      {/* show main content or statistics content depending on
+    {/* show main content or statistics content depending on
           main variable status */}
-      {main
-      ?<Main
-        addElement={()=>(setAddElement(true))}
+    {main
+      ? <Main
+        addElement={() => (setAddElement(true))}
         data={data}
-        login = {login}
-        triggerEdit = {triggerEdit}
+        login={login}
+        setEdit={setEdit}
       />
 
-      :<Statistics/>
-      }
+      : <Statistics />
+    }
 
 
-      {/* modals */}
-      
-      <AddElement
-        visible={addElement}
-        close={() => (setAddElement(false))}
-        refresh={getResponse}
-      />
+    {/* modals */}
 
-      <Report
-        visible={report}
-        close={() => (setReport(false))}
-      />
+    <AddElement
+      visible={addElement}
+      close={() => (setAddElement(false))}
+      refresh={getResponse}
+    />
 
-      <Log        
-        visible={log}        
-        setLogin = {() => (setLogin(true))}
-        close={() => (setLog(false))}        
-      />
+    <Report
+      visible={report}
+      close={() => (setReport(false))}
+    />
 
-      <Edit
-        edit = {edit}
-        visible={edit.visible}
-        close={() => (setEdit({_id:'',type:'',visible:false}))}        
-        refresh={getResponse}
-      />
+    <Log
+      visible={log}
+      setLogin={() => (setLogin(true))}
+      close={() => (setLog(false))}
+    />
 
-    </div>
-  );
+    <Edit
+      edit={edit}
+      itemsEdit={itemsEdit}
+      visible={edit.visible}
+      parent={parentEdit}
+      close={() => (setEdit({
+        _id: '', type: '', title: '',
+        content: '', parent: '', note: '',
+        visible: false
+      }))}
+      refresh={getResponse}
+    />
+
+  </div>
+);
 }
 
 export default App;

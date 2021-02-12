@@ -2,7 +2,6 @@ import React from 'react';
 import { useState } from "react";
 import { Form, Radio, Upload, Input, Modal, Select, Button, Space } from 'antd';
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined, RetweetOutlined, RightOutlined } from '@ant-design/icons';
-import Layout from 'antd/lib/layout/layout';
 import axios from 'axios';
 
 

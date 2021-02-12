@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Select, Modal, Form } from 'antd';
-import axios from 'axios';
 import FileSaver from 'file-saver';
+import axios from 'axios';
 
 const Report = (props) => {
   const layout = {

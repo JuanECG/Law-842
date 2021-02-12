@@ -9,14 +9,7 @@ const Edit = (props) => {
         wrapperCol: { span: 12 }
     };
 
-    const [items, setItems] = useState([]);
-
-    const getItems = async () => {
-        setItems((await axios(`/api/user/${props.edit.type}`)).data);
-    }    
-
     const [form] = Form.useForm();
-
 
     return (
         <Modal
@@ -39,7 +32,7 @@ const Edit = (props) => {
                         console.log('Validate Failed:', info);
                     });
             }}
-            width={400}
+            width={800}
         >
             <Form {...layout} form={form} >
 
@@ -52,11 +45,20 @@ const Edit = (props) => {
                         message: "Seleccione el componente padre"
                     }]}
                 >
-                    <Select>
-                        {getItems}                        
-                        {items.map((item) => (
+                    <Select
+                        // value={
+                        //     props.itemsEdit.find((item) => (
+                        //         item._id === props.edit.parent
+                        //     ))._id
+                        // }
+                        options={
+                            props.itemsEdit.map((item) => (
+                                { label: item.title, value: item._id }
+                            ))
+                        }>
+                        {/* {props.itemsEdit.map((item) => (                            
                             <Select.Option value={item._id}>{item.title}</Select.Option>
-                        ))}
+                        ))} */}
                     </Select>
                 </Form.Item>
 
@@ -70,9 +72,9 @@ const Edit = (props) => {
                 <Form.Item
                     name="cuerpo"
                     label="Cuerpo"
-                    hidden={props.edit.type !== 'ARTÍCULO' ? false : true}
+                    hidden={props.edit.type !== 'ARTÍCULO' ? true : false}
                     rules={[{
-                        required: props.edit.type !== 'ARTÍCULO' ? true : false,
+                        required: props.edit.type !== 'ARTÍCULO' ? false : true,
                         message: "Digite el cuerpo del artículo"
                     }]}>
                     <Input.TextArea
@@ -83,8 +85,8 @@ const Edit = (props) => {
                 <Form.Item
                     name="nota"
                     label="Nota"
-                    hidden={props.edit.type !== 'ARTÍCULO' ? false : true}                                                            
-                    >
+                    hidden={props.edit.type !== 'ARTÍCULO' ? true : false}
+                >
                     <Input.TextArea
                         allowClear
                         autoSize />

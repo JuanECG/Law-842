@@ -2,7 +2,6 @@ import { usePromiseTracker } from "react-promise-tracker";
 import { PlusCircleOutlined } from '@ant-design/icons';
 import Loader from 'react-loader-spinner';
 import { Button, Result } from 'antd';
-import { useState } from "react";
 import Element from './element';
 
 
@@ -26,6 +25,7 @@ const Main = (props) => {
         <div
             style={{
                 width: "100%",
+                marginTop: "100px",
                 height: "100",
                 display: "flex",
                 justifyContent: "center",
@@ -52,14 +52,9 @@ const Main = (props) => {
             }
             {props.data.map(data => (
                 <Element
-                    _id={data._id}
-                    type={data.type}
-                    title={data.title}
-                    id={data.id}
-                    number={data.number}
-                    data={data}
-                    triggerEdit = {props.triggerEdit}
-                    login={props.login} />
+                    data={data}                    
+                    login={props.login}                     
+                    setEdit = {props.setEdit}/>
             ))}
 
         </div>
