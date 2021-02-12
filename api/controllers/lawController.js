@@ -472,12 +472,7 @@ module.exports.chapterUPDATE = async (req, res) => {
 
 module.exports.articleUPDATE = async (req, res) => {
   try {
-    if (
-      !req.params.oid ||
-      !req.body.nombre ||
-      !req.body.cuerpo ||
-      !req.body.nota
-    )
+    if (!req.params.oid || !req.body.nombre || !req.body.cuerpo)
       return res.status(400).send('Missing Parameters'); // CHECK parameters precense
 
     const qArticle = await Article.findById(req.params.oid);
