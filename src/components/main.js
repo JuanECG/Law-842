@@ -47,7 +47,11 @@ const Main = (props) => {
           </Button>
         )}
         {props.data.map((data) => (
-          <Element data={data} login={props.login} setEdit={props.setEdit} />
+          <Element
+            data={data}
+            login={props.login}
+            setEdit={props.setEdit}
+            setDel={props.setDel} />
         ))}
       </div>
     );

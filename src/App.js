@@ -9,6 +9,7 @@ import Statistics from './components/statistic';
 import TopNavbar from './components/TopNavbar';
 import Filter from './components/filter';
 import Report from './components/report';
+import Delete from './components/delete';
 import Edit from './components/edit';
 import Main from './components/main';
 import Log from './components/log';
@@ -46,6 +47,8 @@ const App = () => {
   });
 
   const [itemsEdit, setItemsEdit] = useState([]);
+
+  const [del, setDel] = useState({_id:'', type:'', visible:false});
 
   useEffect(() => {
     getResponse();
@@ -92,6 +95,7 @@ const App = () => {
           addElement={() => setAddElement(true)}
           data={data}
           login={login}
+          setDel={setDel}
           setEdit={setEdit}
         />
       ) : (
@@ -129,6 +133,13 @@ const App = () => {
             visible: false
           })
         }
+        refresh={getResponse}
+      />
+
+      <Delete
+        del={del}
+        visible={del.visible}
+        close={()=> setDel({_id:'', type:'', visible: false})}
         refresh={getResponse}
       />
     </div>

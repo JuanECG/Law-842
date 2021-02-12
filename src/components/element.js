@@ -1,5 +1,5 @@
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Collapse, Divider, Result } from 'antd';
+import { Button, Collapse, Divider } from 'antd';
 import '../styles/Element.css';
 import React from 'react';
 
@@ -41,6 +41,9 @@ const Element = (props) => {
               type="link"
               className="delete"
               danger
+              onClick={()=>{
+                props.setDel({_id:props.data._id, type:props.data.type, visible:true})
+              }}
               icon={<DeleteOutlined />}
             >
               Eliminar
@@ -52,6 +55,7 @@ const Element = (props) => {
               data={childData}
               login={props.login}
               setEdit={props.setEdit}
+              setDel={props.setDel}
             />
           ))}
 
@@ -94,6 +98,9 @@ const Element = (props) => {
               type="link"
               className="delete"
               danger
+              onClick={()=>{
+                props.setDel({_id:props.data._id, type:props.data.type, visible:true})
+              }}
               icon={<DeleteOutlined />}
             >
               Eliminar
