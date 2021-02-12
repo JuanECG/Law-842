@@ -24,8 +24,6 @@ router.put('/article/:oid', verifyToken, lawController.articleUPDATE);
 router.delete('/article/:oid', verifyToken, lawController.articleDELETE);
 router.get('/article/:filter', lawController.filterArticleGET);
 
-router.put('/comment/:article', verifyToken, lawController.commentUPDATE);
-
 router.get('/list/:category', lawController.getList);
 
 module.exports = router;

@@ -480,6 +480,7 @@ module.exports.articleUPDATE = async (req, res) => {
       qArticle.title = req.body.nombre;
       qArticle.content = req.body.cuerpo;
       qArticle.note = req.body.nota;
+      qArticle.paragraphs = req.body.paragrafos;
       await qArticle.save();
       new Operation({
         _id: new mongoose.Types.ObjectId(),
@@ -492,29 +493,6 @@ module.exports.articleUPDATE = async (req, res) => {
     } else res.status(500).send('Article not found');
   } catch (err) {
     res.status(400).json(err);
-  }
-};
-
-module.exports.commentUPDATE = async (req, res) => {
-  try {
-    if (!req.body.padre || !req.body.paragraphs)
-      return res.status(400).send('Missing Parameters'); // CHECK parameters precense
-
-    const qArticle = await Article.findById(req.body.padre);
-    if (qArticle) {
-      qArticle.paragraphs = req.body.paragraphs;
-      qArticle.save();
-      new Operation({
-        _id: new mongoose.Types.ObjectId(),
-        type: 'UPDATE',
-        logged: true,
-        category: ARTICLE,
-        data: [req.params.padre]
-      }).save();
-      res.send('INSERTED new Paragraph');
-    } else res.status(500).send('Article not found');
-  } catch (err) {
-    res.status(400).json({ message: err });
   }
 };
 
