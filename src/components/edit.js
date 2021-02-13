@@ -1,7 +1,7 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
 import { Form, Radio, Upload, Input, Modal, message, Button } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 
 const Edit = (props) => {
@@ -12,17 +12,6 @@ const Edit = (props) => {
 
   const childLayout = {
     wrapperCol: { offset: 8, span: 16 },
-  };
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
   };
 
   const [form] = Form.useForm();

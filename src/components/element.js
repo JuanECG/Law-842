@@ -1,7 +1,7 @@
+import { Button, Collapse, Divider, Image, Typography } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Collapse, Divider, Image, Typography  } from 'antd';
-import '../styles/Element.css';
 import ReactPlayer from 'react-player'
+import '../styles/Element.css';
 import React from 'react';
 
 const { Panel } = Collapse;
@@ -63,7 +63,21 @@ const Element = (props) => {
             />
           ))}
 
-          <p>{props.data.content}</p>
+          <p>{props.data.content}</p>          
+          {props.data.media && (
+
+            <Image
+              width={100}              
+              style={{ flexGrow: 1, marginLeft: 'auto', marginRight: 'auto' }}
+              src={props.data.media}
+            />
+
+          )}
+          {props.data.url && (
+            <ReactPlayer url={props.data.url} width="420px"
+              height="300px" marginLeft="auto" marginRight="auto" />
+          )}
+
         </Panel>
       </Collapse>
     );
@@ -147,14 +161,7 @@ const Element = (props) => {
             )}
             {props.data.url && (
               <ReactPlayer url={props.data.url} width="420px"
-              height="300px" />
-              //<iframe src={props.data.url} width='420'></iframe>
-              //   <Paragraph  copyable>{props.data.url}</Paragraph >
-              // <div style={{ display: 'flex', flexDirection: 'column' }}>
-              //   <Button>
-              //     <p>Abrir link</p>
-              //   </Button>
-              // </div>
+                height="300px" />
             )}
           </div>
         </Panel>

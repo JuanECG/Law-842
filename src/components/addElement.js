@@ -1,7 +1,7 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { Form, Radio, Upload, Input, Modal, Select, Button } from 'antd';
+import { Form, Radio, Upload, Input, Modal, Select, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 
 const AddElement = (props) => {
@@ -88,6 +88,7 @@ const AddElement = (props) => {
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
+            message.error('¡Error!, el elemento tiene elementos hijos')
           });
       }}
     >

@@ -7,6 +7,7 @@ import axios from 'axios';
 import AddElement from './components/addElement';
 import Statistics from './components/statistic';
 import TopNavbar from './components/TopNavbar';
+import FooterCont from './components/footer';
 import Filter from './components/filter';
 import Report from './components/report';
 import Delete from './components/delete';
@@ -68,12 +69,11 @@ const App = () => {
 
   const getResponse = async () => {
     const response = await trackPromise(axios(`/api/${url}`));
-    setData(response.data);
-    //console.log(response.data);
+    setData(response.data);    
   };
 
   return (
-    <div>
+    <div>      
       <TopNavbar
         triggerMain={() => setMain(true)}
         triggerStatistics={() => setMain(false)}
@@ -87,11 +87,11 @@ const App = () => {
           }, 1000);
         }}
       />
-
       <Filter triggerFilter={(url) => setUrl(url)} visible={main} />
 
       {/* show main content or statistics content depending on
           main variable status */}
+         
       {main ? (
         <Main
           addElement={() => setAddElement(true)}
@@ -103,6 +103,8 @@ const App = () => {
       ) : (
         <Statistics />
       )}
+
+      <FooterCont />
 
       {/* modals */}
 
