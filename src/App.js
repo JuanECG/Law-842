@@ -1,6 +1,5 @@
 import 'antd/dist/antd.css';
 
-import { trackPromise } from 'react-promise-tracker';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -33,8 +32,6 @@ const App = () => {
 
   const [login, setLogin] = useState(localStorage.getItem('auth-token'));
 
-  // body useState variables
-
   const [addElement, setAddElement] = useState(false);
 
   const [edit, setEdit] = useState({
@@ -44,32 +41,40 @@ const App = () => {
     content: '',
     parent: '',
     note: '',
-    url:'',
+    url: '',
     paragraphs: [],
     visible: false
   });
 
   const [itemsEdit, setItemsEdit] = useState([]);
 
-  const [del, setDel] = useState({_id:'', type:'', visible:false});
+  const [del, setDel] = useState({ _id: '', type: '', visible: false });
 
   useEffect(() => {
     getResponse();
   }, [url]);
 
   useEffect(() => {
-    //console.log(edit);
     if (edit.type === 'CAPÍTULO')
-      axios(`/api/list/TÍTULO`).then((response) => setItemsEdit(response.data));
+      axios(`/api/list/TÍTULO`, {
+        headers: { 'auth-token': login }
+      }).then((response) => setItemsEdit(response.data));
     else if (edit.type === 'ARTÍCULO')
-      axios(`/api/list/CAPÍTULO`).then((response) =>
-        setItemsEdit(response.data)
-      );
+      axios(`/api/list/CAPÍTULO`, {
+        headers: { 'auth-token': login }
+      }).then((response) => setItemsEdit(response.data));
   }, [edit]);
 
   const getResponse = async () => {
+<<<<<<< HEAD
     const response = await trackPromise(axios(`/api/${url}`));
     setData(response.data);    
+=======
+    const response = await axios(`/api/${url}`, {
+      headers: { 'auth-token': login }
+    });
+    setData(response.data);
+>>>>>>> ad111351e63160af66fa4f8e2758e3b06dc094d9
   };
 
   return (
@@ -134,7 +139,7 @@ const App = () => {
             content: '',
             parent: '',
             note: '',
-            url:'',
+            url: '',
             paragraphs: [],
             visible: false
           })
@@ -145,7 +150,7 @@ const App = () => {
       <Delete
         del={del}
         visible={del.visible}
-        close={()=> setDel({_id:'', type:'', visible: false})}
+        close={() => setDel({ _id: '', type: '', visible: false })}
         refresh={getResponse}
       />
     </div>

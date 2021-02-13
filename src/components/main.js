@@ -51,7 +51,8 @@ const Main = (props) => {
             data={data}
             login={props.login}
             setEdit={props.setEdit}
-            setDel={props.setDel} />
+            setDel={props.setDel}
+          />
         ))}
       </div>
     );
