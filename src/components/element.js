@@ -130,6 +130,7 @@ const Element = (props) => {
               ))}
             </div>
           )}
+         
         </Panel>
       </Collapse>
     );

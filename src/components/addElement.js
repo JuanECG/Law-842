@@ -1,9 +1,10 @@
 import React from 'react';
-import { useState } from "react";
-import { Form, Radio, Upload, Input, Modal, Select, Button, Space } from 'antd';
-import { InboxOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
+import { useState, useEffect } from "react";
+import { Form, Radio, Upload, Input, Modal, Select, Button, Space, message } from 'antd';
+import { InboxOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
+const { Dragger } = Upload;
 
 const AddElement = (props) => {
 
@@ -13,15 +14,7 @@ const AddElement = (props) => {
   };
 
   const childLayout = {
-    wrapperCol: { offset: 5, span: 16 },
-  };
-
-  const normFile = e => {
-    console.log('Upload event:', e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
+    wrapperCol: { offset: 8, span: 16 },
   };
 
   const [content, setContent] = useState(true);
@@ -29,6 +22,12 @@ const AddElement = (props) => {
   const [items, setItems] = useState([]);
   const [upload, setUpload] = useState(true);
   const [url, setUrl] = useState(false);
+  const [form] = Form.useForm();
+  const [media, setMedia] = useState([]);
+
+  useEffect(() => {
+    console.log(media);
+  }, [media])
 
   const changeMediaUploadType = (e) => {
     if (e.target.value === '1') {
@@ -40,7 +39,41 @@ const AddElement = (props) => {
       setUrl(true);
     }
   }
-  const [form] = Form.useForm();
+
+  const normFile = function (e) {
+    if (e.fileList.length > 1) {
+      setMedia([e.fileList[e.fileList.length - 1]]);
+      return [e.fileList[1]];
+    }
+    setMedia([e.fileList[e.fileList.length - 1]]);
+    return e && e.fileList;
+  };
+
+  // const uploadProps = {
+  //   beforeUpload: () => {
+  //     return (false);
+  //   },
+  //   media
+  // }
+
+  const uploadProps = {
+    name: 'media',
+    multiple: false,
+    showUploadList: {
+        showDownloadIcon: false,
+    },
+    onRemove: file => {
+        setMedia([]);
+    },
+    beforeUpload: file => {
+        setMedia([file])
+        return false;
+    },
+    media
+  }
+
+  
+
   return (
 
     <Modal
@@ -55,9 +88,16 @@ const AddElement = (props) => {
         form
           .validateFields()
           .then(async (values) => {
-            console.log(values);
+            // if (values.media) values.media = values.media[0];
+            // console.log(values);
+            const formData = new FormData();
+            for (const item of Object.keys(values)) formData.append(item, values[item]);
+            formData.set('media',media[0]);            
+            formData.set('url',values.url);                        
+            // for (const item of Object.keys(values)) console.log(item, formData.get(item));
+            // console.log(formData);
             console.log(await axios.post('/api/elements',
-              values,
+              formData,
               { headers: { 'auth-token': localStorage.getItem('auth-token') } }));
             form.resetFields();
             props.refresh();
@@ -111,7 +151,7 @@ const AddElement = (props) => {
           name="nombre"
           label="Nombre del componente"
           rules={[{ required: true, message: "Digite el nombre del componente" }]}>
-          <Input />
+          <Input allowClear />
         </Form.Item>
 
         <Form.Item
@@ -124,7 +164,7 @@ const AddElement = (props) => {
             autoSize />
         </Form.Item>
 
-        <Form.Item name="media" label="Media">
+        <Form.Item label="Media">
           <Radio.Group onChange={changeMediaUploadType} defaultValue="1">
             <Radio value="1">link</Radio>
             <Radio value="2">archivo</Radio>
@@ -132,23 +172,26 @@ const AddElement = (props) => {
         </Form.Item>
 
         <Form.Item
-          name="dragger"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
+          // name="media"
+          // valuePropName="fileList"
+          // getValueFromEvent={normFile}
           hidden={upload}
           {...childLayout} >
-          <Upload.Dragger name="files" action="/upload.do">
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">Arrastra archivos aquí</p>
-            <p className="ant-upload-hint">
-              O si lo prefieres haz click para subir uno
-            </p>
-          </Upload.Dragger>
+
+          <Upload  {...uploadProps}>
+            <Button icon={<PlusOutlined />}>
+              Seleccione archivo
+            </Button>
+          </Upload>
+          
+
         </Form.Item>
 
-        <Form.List name="links" hidden={url} >
+        <Form.Item name="url" hidden={url} label="Link Media" >
+          <Input allowClear defaultValue='' />
+        </Form.Item>
+
+        {/* <Form.List name="links" hidden={url} >
           {(fields, { add, remove }) => (
             <>
               {fields.map(field => (
@@ -161,7 +204,7 @@ const AddElement = (props) => {
                 >
                   <Form.Item
                     {...field}
-                    name={[field.name]}                  
+                    name={[field.name]}
                     rules={[{ required: true, message: 'link requerido' }]}
                   >
                     <Input placeholder="Url" style={{ width:'200px' }}/>
@@ -176,7 +219,10 @@ const AddElement = (props) => {
               </Form.Item>
             </>
           )}
-        </Form.List>
+        </Form.List> */}
+
+
+
 
       </Form>
     </Modal>

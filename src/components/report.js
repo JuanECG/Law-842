@@ -57,7 +57,7 @@ const Report = (props) => {
       <Form {...layout} form={form} initialValues={{ type: 'TODO' }}>
         <Form.Item name="type" label="Tipo de componente">
           <Select
-            defaultValue="TODO"
+            value="TODO"
             onChange={async (value) => {
               if (value === 'TODO') setComp(true);
               else {
