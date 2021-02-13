@@ -502,6 +502,37 @@ module.exports.titleUPDATE = async (req, res) => {
     const qTitle = await Title.findById(req.params.oid);
     if (qTitle) {
       qTitle.title = req.body.nombre;
+
+      if (!(!req.file && !req.body.url)) {
+        qTitle.url = req.body.url;
+
+        if (qTitle.url && qTitle.media) {
+          const tmpMedia = qTitle.media;
+          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
+            if (err) throw err;
+            console.log('Deleted file by title updated:', tmpMedia.substr(7));
+          });
+          fs.unlink(req.file.path, (err) => {
+            if (err) throw err;
+            console.log('Deleted file by title updated:', req.file.filename);
+          });
+        } else if (req.file && qTitle.media) {
+          const tmpMedia = qTitle.media;
+          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
+            if (err) throw err;
+            console.log('Deleted file by title updated:', tmpMedia.substr(7));
+          });
+        } else if (req.file && qTitle.url) {
+          fs.unlink(req.file.path, (err) => {
+            if (err) throw err;
+            console.log('Deleted file by title updated:', req.file.filename);
+          });
+        }
+
+        qTitle.media =
+          req.file && !qTitle.url ? `/media/${req.file.filename}` : undefined;
+      }
+
       await qTitle.save();
       new Operation({
         _id: new mongoose.Types.ObjectId(),
@@ -525,6 +556,37 @@ module.exports.chapterUPDATE = async (req, res) => {
     const qChapter = await Chapter.findById(req.params.oid);
     if (qChapter) {
       qChapter.title = req.body.nombre;
+
+      if (!(!req.file && !req.body.url)) {
+        qChapter.url = req.body.url;
+
+        if (qChapter.url && qChapter.media) {
+          const tmpMedia = qChapter.media;
+          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
+            if (err) throw err;
+            console.log('Deleted file by chapter updated:', tmpMedia.substr(7));
+          });
+          fs.unlink(req.file.path, (err) => {
+            if (err) throw err;
+            console.log('Deleted file by chapter updated:', req.file.filename);
+          });
+        } else if (req.file && qChapter.media) {
+          const tmpMedia = qChapter.media;
+          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
+            if (err) throw err;
+            console.log('Deleted file by chapter updated:', tmpMedia.substr(7));
+          });
+        } else if (req.file && qChapter.url) {
+          fs.unlink(req.file.path, (err) => {
+            if (err) throw err;
+            console.log('Deleted file by chapter updated:', req.file.filename);
+          });
+        }
+
+        qChapter.media =
+          req.file && !qChapter.url ? `/media/${req.file.filename}` : undefined;
+      }
+
       await qChapter.save();
       new Operation({
         _id: new mongoose.Types.ObjectId(),
@@ -551,6 +613,37 @@ module.exports.articleUPDATE = async (req, res) => {
       qArticle.content = req.body.cuerpo;
       qArticle.note = req.body.nota;
       qArticle.paragraphs = req.body.paragrafos;
+
+      if (!(!req.file && !req.body.url)) {
+        qArticle.url = req.body.url;
+
+        if (qArticle.url && qArticle.media) {
+          const tmpMedia = qArticle.media;
+          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
+            if (err) throw err;
+            console.log('Deleted file by article updated:', tmpMedia.substr(7));
+          });
+          fs.unlink(req.file.path, (err) => {
+            if (err) throw err;
+            console.log('Deleted file by article updated:', req.file.filename);
+          });
+        } else if (req.file && qArticle.media) {
+          const tmpMedia = qArticle.media;
+          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
+            if (err) throw err;
+            console.log('Deleted file by article updated:', tmpMedia.substr(7));
+          });
+        } else if (req.file && qArticle.url) {
+          fs.unlink(req.file.path, (err) => {
+            if (err) throw err;
+            console.log('Deleted file by article updated:', req.file.filename);
+          });
+        }
+
+        qArticle.media =
+          req.file && !qArticle.url ? `/media/${req.file.filename}` : undefined;
+      }
+
       await qArticle.save();
       new Operation({
         _id: new mongoose.Types.ObjectId(),
