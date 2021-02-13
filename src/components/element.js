@@ -5,6 +5,8 @@ import '../styles/Element.css';
 import React from 'react';
 
 const { Panel } = Collapse;
+const { Paragraph } = Typography;
+
 
 const Element = (props) => {
   // if element has any child, render each one of them
@@ -66,11 +68,11 @@ const Element = (props) => {
             />
           ))}
 
-          <p>{props.data.content}</p>          
+          <p>{props.data.content}</p>
           {props.data.media && (
 
             <Image
-              width={100}              
+              width={100}
               style={{ flexGrow: 1, marginLeft: 'auto', marginRight: 'auto' }}
               src={props.data.media}
             />
@@ -168,6 +170,14 @@ const Element = (props) => {
             )}
             {props.data.url && (
               <ReactPlayer url={props.data.url} width="420px" height="300px" />
+
+              //<iframe src={props.data.url} width='420'></iframe>
+              //   <Paragraph  copyable>{props.data.url}</Paragraph >
+              // <div style={{ display: 'flex', flexDirection: 'column' }}>
+              //   <Button>
+              //     <p>Abrir link</p>
+              //   </Button>
+              // </div>
             )}
           </div>
         </Panel>

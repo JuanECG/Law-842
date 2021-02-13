@@ -1,19 +1,4 @@
-<<<<<<< HEAD
 import { Form, Radio, Upload, Input, Modal, Select, Button, message } from 'antd';
-=======
-import React from 'react';
-import { useState } from 'react';
-import {
-  Form,
-  Radio,
-  Upload,
-  Input,
-  Modal,
-  Select,
-  message,
-  Button
-} from 'antd';
->>>>>>> ad111351e63160af66fa4f8e2758e3b06dc094d9
 import { PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import React from 'react';

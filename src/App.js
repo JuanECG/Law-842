@@ -66,15 +66,10 @@ const App = () => {
   }, [edit]);
 
   const getResponse = async () => {
-<<<<<<< HEAD
-    const response = await trackPromise(axios(`/api/${url}`));
-    setData(response.data);    
-=======
     const response = await axios(`/api/${url}`, {
       headers: { 'auth-token': login }
     });
     setData(response.data);
->>>>>>> ad111351e63160af66fa4f8e2758e3b06dc094d9
   };
 
   return (
