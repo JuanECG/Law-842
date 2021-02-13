@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 import axios from 'axios';
 
 const Delete = (props) => {
@@ -32,15 +32,22 @@ const Delete = (props) => {
               headers: { 'auth-token': localStorage.getItem('auth-token') }
             })
           );
-          props.refresh();
-          props.close();
+          message.success('¡Se ha eliminado el componente existosamente!')
+          props.refresh();          
         } catch (error) {
           // add alert message
-          if (error.response.data === 'Error: Title has child')
+          if (error.response.data === 'Error: Title has child'){
             console.log('Error: Título tiene elementos hijos');
-          else if (error.response.data === 'Error: Chapter has child')
+            message.error('¡Error!, el Título tiene elementos hijos')
+          }
+          else if (error.response.data === 'Error: Chapter has child'){
             console.log('Error: Capítulo tiene elementos hijos');
+            message.error('¡Error!, el Capítulo stiene elementos hijos');            
+          }
           else console.log(error.response);
+        }
+        finally{
+          props.close()
         }
       }}
       width={800}

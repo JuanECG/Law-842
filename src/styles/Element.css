@@ -1,5 +1,10 @@
 
-
+.contentParent{
+    display: flex;    
+}
+.content{
+    flex-grow: 3;
+}
 .edit {
     margin-left: 80%;
     margin-bottom: 10px;

@@ -1,6 +1,6 @@
 import React from 'react';
-import { useEffect } from 'react';
-import { Input, Modal, Form, Space, Button } from 'antd';
+import { useEffect, useState } from 'react';
+import { Form, Radio, Upload, Input, Modal, message, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -11,7 +11,7 @@ const Edit = (props) => {
   };
 
   const childLayout = {
-    wrapperCol: { offset: 5, span: 16 },
+    wrapperCol: { offset: 8, span: 16 },
   };
 
   const formItemLayout = {
@@ -26,13 +26,43 @@ const Edit = (props) => {
   };
 
   const [form] = Form.useForm();
+  const [upload, setUpload] = useState(true);
+  const [url, setUrl] = useState(false);
+  const [media, setMedia] = useState([]);
+
+  const changeMediaUploadType = (e) => {
+    if (e.target.value === '1') {
+      setUpload(true);
+      setUrl(false);
+    } else {
+      setUpload(false);
+      setUrl(true);
+    }
+  };
+
+  const uploadProps = {
+    name: 'media',
+    multiple: false,
+    showUploadList: {
+      showDownloadIcon: false
+    },
+    onRemove: () => {
+      setMedia([]);
+    },
+    beforeUpload: (file) => {
+      setMedia([file]);
+      return false;
+    },
+    media
+  };
 
   useEffect(() => {
     form.setFieldsValue({
       nombre: props.edit.title,
       cuerpo: props.edit.content,
       nota: props.edit.note,
-      paragrafos: props.edit.paragraphs
+      paragrafos: props.edit.paragraphs,
+      url: props.edit.url
     });
   }, [props.edit]);
 
@@ -62,17 +92,34 @@ const Edit = (props) => {
               default:
                 break;
             }
+            const formData = new FormData();
+            for (const item of Object.keys(values))
+              formData.append(item, values[item]);
+            formData.set('media', media[0]); // validation media file
+            if (formData.get('url') === 'undefined') formData.delete('url'); // removing url when empty field
+            if (values.paragrafos.length === 0) formData.delete('paragrafos');
             console.log(
-              (
-                await axios.put(url, values, {
-                  headers: { 'auth-token': localStorage.getItem('auth-token') }
-                })
-              ).data
-            );            
-            console.log(values);
+              await axios.put(url, formData, {
+                headers: { 'auth-token': localStorage.getItem('auth-token') }
+              })
+            );
+            message.success('¡Se ha editado el componente existosamente!');
             form.resetFields();
+            setMedia([]);
             props.refresh();
             props.close();
+            // console.log(
+            //   (
+            //     await axios.put(url, values, {
+            //       headers: { 'auth-token': localStorage.getItem('auth-token') }
+            //     })
+            //   ).data
+            // );            
+            // console.log(values);
+            // 
+            // form.resetFields();
+            // props.refresh();
+            // props.close();
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
@@ -148,8 +195,8 @@ const Edit = (props) => {
 
                   </Form.Item>
                   <Button
-                    onClick={() => remove(field.name)}                   
-                    style={{marginTop:'4px'}}
+                    onClick={() => remove(field.name)}
+                    style={{ marginTop: '4px' }}
                     danger>
                     Borrar
                   </Button>
@@ -167,6 +214,24 @@ const Edit = (props) => {
             </>
           )}
         </Form.List>
+
+        <Form.Item label="Media">
+          <Radio.Group onChange={changeMediaUploadType} defaultValue="1">
+            <Radio value="1">link</Radio>
+            <Radio value="2">archivo</Radio>
+          </Radio.Group>
+        </Form.Item>
+
+        <Form.Item hidden={upload} {...childLayout} >
+          <Upload {...uploadProps} listType="picture">
+            <Button icon={<PlusOutlined />}>Seleccione archivo</Button>
+          </Upload>
+        </Form.Item>
+
+        <Form.Item name="url" hidden={url} label="Link Media">
+          <Input allowClear defaultValue="" />
+        </Form.Item>
+
       </Form>
     </Modal>
   );

@@ -41,11 +41,20 @@ const AddElement = (props) => {
     onRemove: () => {
       setMedia([]);
     },
-    beforeUpload: (file) => {
+    beforeUpload: (file) => {      
       setMedia([file]);
       return false;
     },
     media
+  };
+
+  const normFile = function (e) {    
+    if (e.fileList.length > 1) {
+      //setMedia([e.fileList[e.fileList.length - 1]]);      
+      return [e.fileList[1]];
+    }
+    //setMedia([e.fileList[e.fileList.length - 1]]);
+    return e && e.fileList;
   };
 
   return (
@@ -71,6 +80,7 @@ const AddElement = (props) => {
                 headers: { 'auth-token': localStorage.getItem('auth-token') }
               })
             );
+            message.success('¡Se ha creado el componente existosamente!');
             form.resetFields();
             setMedia([]);
             props.refresh();
@@ -149,8 +159,8 @@ const AddElement = (props) => {
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item hidden={upload} {...childLayout}>
-          <Upload {...uploadProps}>
+        <Form.Item hidden={upload} {...childLayout} getValueFromEvent={normFile} valuePropName='fileList' name="media" >
+          <Upload {...uploadProps} listType="picture">
             <Button icon={<PlusOutlined />}>Seleccione archivo</Button>
           </Upload>
         </Form.Item>

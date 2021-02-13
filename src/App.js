@@ -43,6 +43,7 @@ const App = () => {
     content: '',
     parent: '',
     note: '',
+    url:'',
     paragraphs: [],
     visible: false
   });
@@ -131,6 +132,7 @@ const App = () => {
             content: '',
             parent: '',
             note: '',
+            url:'',
             paragraphs: [],
             visible: false
           })

@@ -1,9 +1,11 @@
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Collapse, Divider } from 'antd';
+import { Button, Collapse, Divider, Image, Typography  } from 'antd';
 import '../styles/Element.css';
+import ReactPlayer from 'react-player'
 import React from 'react';
 
 const { Panel } = Collapse;
+const { Paragraph } = Typography;
 
 const Element = (props) => {
   // if element has any child, render each one of them
@@ -27,7 +29,8 @@ const Element = (props) => {
                   content: props.data.content,
                   parent: props.data.parent,
                   note: props.data.note,
-                  paragraphs:props.data.paragraphs,
+                  url: props.data.url,
+                  paragraphs: props.data.paragraphs,
                   visible: true
                 });
               }}
@@ -42,8 +45,8 @@ const Element = (props) => {
               type="link"
               className="delete"
               danger
-              onClick={()=>{
-                props.setDel({_id:props.data._id, type:props.data.type, visible:true})
+              onClick={() => {
+                props.setDel({ _id: props.data._id, type: props.data.type, visible: true })
               }}
               icon={<DeleteOutlined />}
             >
@@ -85,7 +88,8 @@ const Element = (props) => {
                   content: props.data.content,
                   parent: props.data.parent,
                   note: props.data.note,
-                  paragraphs:props.data.paragraphs,
+                  paragraphs: props.data.paragraphs,
+                  url: props.data.url,
                   visible: true
                 });
               }}
@@ -100,8 +104,8 @@ const Element = (props) => {
               type="link"
               className="delete"
               danger
-              onClick={()=>{
-                props.setDel({_id:props.data._id, type:props.data.type, visible:true})
+              onClick={() => {
+                props.setDel({ _id: props.data._id, type: props.data.type, visible: true })
               }}
               icon={<DeleteOutlined />}
             >
@@ -109,28 +113,50 @@ const Element = (props) => {
             </Button>
           )}
           <Divider className="dividier" />
+          <div className="contentParent">
+            <div className="content">
+              <p>{props.data.content}</p>
 
-          <p>{props.data.content}</p>
-
-          {props.data.note && (
-            <div>
-              <hr />
-              <p style={{ 'font-style': 'italic' }}>NOTA: {props.data.note}</p>
-            </div>
-          )}
-          {props.data.paragraphs && (
-            <div>
-              {props.data.paragraphs.map((paragraph, index) => (
+              {props.data.note && (
                 <div>
                   <hr />
-                  <p>
-                    Parágrafo {index + 1}: {paragraph}{' '}
-                  </p>
+                  <p style={{ 'font-style': 'italic' }}>NOTA: {props.data.note}</p>
                 </div>
-              ))}
+              )}
+              {props.data.paragraphs && (
+                <div>
+                  {props.data.paragraphs.map((paragraph, index) => (
+                    <div>
+                      <hr />
+                      <p>
+                        Parágrafo {index + 1}: {paragraph}{' '}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-         
+            {props.data.media && (
+
+              <Image
+                width={100}
+                style={{ flexGrow: 1 }}
+                src={props.data.media}
+              />
+
+            )}
+            {props.data.url && (
+              <ReactPlayer url={props.data.url} width="420px"
+              height="300px" />
+              //<iframe src={props.data.url} width='420'></iframe>
+              //   <Paragraph  copyable>{props.data.url}</Paragraph >
+              // <div style={{ display: 'flex', flexDirection: 'column' }}>
+              //   <Button>
+              //     <p>Abrir link</p>
+              //   </Button>
+              // </div>
+            )}
+          </div>
         </Panel>
       </Collapse>
     );

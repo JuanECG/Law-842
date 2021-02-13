@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Select, Modal, Form } from 'antd';
+import { Select, Modal, Form, message } from 'antd';
 import FileSaver from 'file-saver';
 import axios from 'axios';
 
@@ -27,7 +27,8 @@ const Report = (props) => {
       onOk={() => {
         form
           .validateFields()
-          .then((values) => {
+          .then((values) => {            
+            const hide = message.loading('Generando reporte', 0);
             const headers = {
               Accept: 'application/pdf'
             };
@@ -43,9 +44,9 @@ const Report = (props) => {
                 FileSaver.saveAs(
                   new Blob([response.data], { type: 'application/pdf' }),
                   `report.pdf`
-                );
-              });
-
+                  );
+                  setTimeout(hide, 0);
+              });               
             form.resetFields();
             props.close();
           })
