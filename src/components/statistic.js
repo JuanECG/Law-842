@@ -17,8 +17,7 @@ const Statsitics = (props) => {
     const REPORTS = await (
       await fetch('/api/statistic', {
         headers: {
-          'auth-token':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDE0N2U4MzdlY2MwYTJmNWE4MzU4NDUiLCJpYXQiOjE2MTI4NDg3Mzd9.KD84rUBSDSGzyyFPvseJ_fFb6Jg0zzQT6mmPX3qJAIg'
+          'auth-token': localStorage.getItem('auth-token')
         }
       })
     ).json();

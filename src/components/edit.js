@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { Form, Radio, Upload, Input, Modal, message, Button } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 const Edit = (props) => {
@@ -11,18 +11,7 @@ const Edit = (props) => {
   };
 
   const childLayout = {
-    wrapperCol: { offset: 8, span: 16 },
-  };
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
+    wrapperCol: { offset: 8, span: 16 }
   };
 
   const [form] = Form.useForm();
@@ -38,6 +27,11 @@ const Edit = (props) => {
       setUpload(false);
       setUrl(true);
     }
+  };
+
+  const normFile = function (e) {
+    if (e.fileList.length > 1) return [e.fileList[1]];
+    return e && e.fileList;
   };
 
   const uploadProps = {
@@ -95,9 +89,18 @@ const Edit = (props) => {
             const formData = new FormData();
             for (const item of Object.keys(values))
               formData.append(item, values[item]);
-            formData.set('media', media[0]); // validation media file
-            if (formData.get('url') === 'undefined') formData.delete('url'); // removing url when empty field
-            if (values.paragrafos.length === 0) formData.delete('paragrafos');
+            if (values.media) {
+              if (values.media[0] && values.media[0] !== 'undefinied')
+                formData.set('media', values.media[0]);
+              else formData.delete('media'); // removing media file when empty field
+            } else formData.delete('media'); // removing media file when empty field
+            if (!values.url) formData.delete('url'); // removing url when empty field
+            if (!values.note) formData.delete('note'); // removing note when empty field
+            if (values.paragrafos) {
+              // removing paragraphs when empty field
+              if (values.paragrafos.length === 0) formData.delete('paragrafos');
+              else formData.set('paragrafos', values.paragrafos);
+            }
             console.log(
               await axios.put(url, formData, {
                 headers: { 'auth-token': localStorage.getItem('auth-token') }
@@ -108,18 +111,6 @@ const Edit = (props) => {
             setMedia([]);
             props.refresh();
             props.close();
-            // console.log(
-            //   (
-            //     await axios.put(url, values, {
-            //       headers: { 'auth-token': localStorage.getItem('auth-token') }
-            //     })
-            //   ).data
-            // );            
-            // console.log(values);
-            // 
-            // form.resetFields();
-            // props.refresh();
-            // props.close();
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
@@ -162,52 +153,40 @@ const Edit = (props) => {
 
         <Form.List
           name="paragrafos"
-
-          hidden={props.edit.type !== 'ARTÍCULO' ? true : false} >
-
+          hidden={props.edit.type !== 'ARTÍCULO' ? true : false}
+        >
           {(fields, { add, remove }) => (
             <>
-              {fields.map(field => (
-                // <Space
-                //   hidden={props.edit.type !== 'ARTÍCULO' ? true : false}
-                //   key={field.key}
-                //   {...formItemLayout}
-                //   style={{ marginLeft: 40, display: 'flex', justifyContent: 'space-around' }}
-                //   //style={{ alignSelf:'flex-end' }}
-                //   //style={{ marginBottom: 8, marginRight: 8 }}
-                //   align="baseline"
-                // >
-
+              {fields.map((field) => (
                 <Form.Item
                   key={field.key}
                   label="Parágrafo"
-                  name={[field.name]}>
+                  name={[field.name]}
+                >
                   <Form.Item
                     {...field}
-                    // key={field.key}
-                    // label="Parágrafo"
-                    // name={[field.name]}
                     rules={[{ required: true, message: 'Parágrafo requerido' }]}
                     noStyle
                   >
-
                     <Input allowClear />
-
                   </Form.Item>
                   <Button
                     onClick={() => remove(field.name)}
                     style={{ marginTop: '4px' }}
-                    danger>
+                    danger
+                  >
                     Borrar
                   </Button>
-
                 </Form.Item>
-
-
-                //  </Space>
               ))}
               <Form.Item {...childLayout}>
-                <Button hidden={props.edit.type !== 'ARTÍCULO' ? true : false} type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                <Button
+                  hidden={props.edit.type !== 'ARTÍCULO' ? true : false}
+                  type="dashed"
+                  onClick={() => add()}
+                  block
+                  icon={<PlusOutlined />}
+                >
                   Añadir Parágrafo
                 </Button>
               </Form.Item>
@@ -222,7 +201,13 @@ const Edit = (props) => {
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item hidden={upload} {...childLayout} >
+        <Form.Item
+          hidden={upload}
+          {...childLayout}
+          getValueFromEvent={normFile}
+          valuePropName="fileList"
+          name="media"
+        >
           <Upload {...uploadProps} listType="picture">
             <Button icon={<PlusOutlined />}>Seleccione archivo</Button>
           </Upload>
@@ -231,7 +216,6 @@ const Edit = (props) => {
         <Form.Item name="url" hidden={url} label="Link Media">
           <Input allowClear defaultValue="" />
         </Form.Item>
-
       </Form>
     </Modal>
   );

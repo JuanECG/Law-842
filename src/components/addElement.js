@@ -1,6 +1,15 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
-import { Form, Radio, Upload, Input, Modal, Select, Button } from 'antd';
+import { useState } from 'react';
+import {
+  Form,
+  Radio,
+  Upload,
+  Input,
+  Modal,
+  Select,
+  message,
+  Button
+} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -41,19 +50,15 @@ const AddElement = (props) => {
     onRemove: () => {
       setMedia([]);
     },
-    beforeUpload: (file) => {      
+    beforeUpload: (file) => {
       setMedia([file]);
       return false;
     },
     media
   };
 
-  const normFile = function (e) {    
-    if (e.fileList.length > 1) {
-      //setMedia([e.fileList[e.fileList.length - 1]]);      
-      return [e.fileList[1]];
-    }
-    //setMedia([e.fileList[e.fileList.length - 1]]);
+  const normFile = function (e) {
+    if (e.fileList.length > 1) return [e.fileList[1]];
     return e && e.fileList;
   };
 
@@ -73,8 +78,12 @@ const AddElement = (props) => {
             const formData = new FormData();
             for (const item of Object.keys(values))
               formData.append(item, values[item]);
-            formData.set('media', media[0]); // validation media file
-            if (formData.get('url') === 'undefined') formData.delete('url'); // removing url when empty field
+            if (values.media) {
+              if (values.media[0] && values.media[0] !== 'undefinied')
+                formData.set('media', values.media[0]);
+              else formData.delete('media'); // removing media file when empty field
+            } else formData.delete('media'); // removing media file when empty field
+            if (!values.url) formData.delete('url'); // removing url when empty field
             console.log(
               await axios.post('/api/elements', formData, {
                 headers: { 'auth-token': localStorage.getItem('auth-token') }
@@ -87,6 +96,7 @@ const AddElement = (props) => {
             props.close();
           })
           .catch((info) => {
+            // add alert
             console.log('Validate Failed:', info);
           });
       }}
@@ -159,7 +169,13 @@ const AddElement = (props) => {
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item hidden={upload} {...childLayout} getValueFromEvent={normFile} valuePropName='fileList' name="media" >
+        <Form.Item
+          hidden={upload}
+          {...childLayout}
+          getValueFromEvent={normFile}
+          valuePropName="fileList"
+          name="media"
+        >
           <Upload {...uploadProps} listType="picture">
             <Button icon={<PlusOutlined />}>Seleccione archivo</Button>
           </Upload>

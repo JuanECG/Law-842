@@ -1,11 +1,10 @@
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Collapse, Divider, Image, Typography  } from 'antd';
+import { Button, Collapse, Divider, Image } from 'antd';
 import '../styles/Element.css';
-import ReactPlayer from 'react-player'
+import ReactPlayer from 'react-player';
 import React from 'react';
 
 const { Panel } = Collapse;
-const { Paragraph } = Typography;
 
 const Element = (props) => {
   // if element has any child, render each one of them
@@ -46,7 +45,11 @@ const Element = (props) => {
               className="delete"
               danger
               onClick={() => {
-                props.setDel({ _id: props.data._id, type: props.data.type, visible: true })
+                props.setDel({
+                  _id: props.data._id,
+                  type: props.data.type,
+                  visible: true
+                });
               }}
               icon={<DeleteOutlined />}
             >
@@ -105,7 +108,11 @@ const Element = (props) => {
               className="delete"
               danger
               onClick={() => {
-                props.setDel({ _id: props.data._id, type: props.data.type, visible: true })
+                props.setDel({
+                  _id: props.data._id,
+                  type: props.data.type,
+                  visible: true
+                });
               }}
               icon={<DeleteOutlined />}
             >
@@ -120,7 +127,9 @@ const Element = (props) => {
               {props.data.note && (
                 <div>
                   <hr />
-                  <p style={{ 'font-style': 'italic' }}>NOTA: {props.data.note}</p>
+                  <p style={{ 'font-style': 'italic' }}>
+                    NOTA: {props.data.note}
+                  </p>
                 </div>
               )}
               {props.data.paragraphs && (
@@ -137,24 +146,14 @@ const Element = (props) => {
               )}
             </div>
             {props.data.media && (
-
               <Image
                 width={100}
                 style={{ flexGrow: 1 }}
                 src={props.data.media}
               />
-
             )}
             {props.data.url && (
-              <ReactPlayer url={props.data.url} width="420px"
-              height="300px" />
-              //<iframe src={props.data.url} width='420'></iframe>
-              //   <Paragraph  copyable>{props.data.url}</Paragraph >
-              // <div style={{ display: 'flex', flexDirection: 'column' }}>
-              //   <Button>
-              //     <p>Abrir link</p>
-              //   </Button>
-              // </div>
+              <ReactPlayer url={props.data.url} width="420px" height="300px" />
             )}
           </div>
         </Panel>

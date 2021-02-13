@@ -27,14 +27,13 @@ const Report = (props) => {
       onOk={() => {
         form
           .validateFields()
-          .then((values) => {            
+          .then((values) => {
             const hide = message.loading('Generando reporte', 0);
             const headers = {
               Accept: 'application/pdf'
             };
             if (localStorage.getItem('auth-token'))
               headers['auth-token'] = localStorage.getItem('auth-token');
-            console.log(headers);
             axios
               .post(`/api/report`, values, {
                 responseType: 'arraybuffer',
@@ -44,9 +43,9 @@ const Report = (props) => {
                 FileSaver.saveAs(
                   new Blob([response.data], { type: 'application/pdf' }),
                   `report.pdf`
-                  );
-                  setTimeout(hide, 0);
-              });               
+                );
+                setTimeout(hide, 0);
+              });
             form.resetFields();
             props.close();
           })
