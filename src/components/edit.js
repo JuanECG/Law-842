@@ -55,9 +55,10 @@ const Edit = (props) => {
       nombre: props.edit.title,
       cuerpo: props.edit.content,
       nota: props.edit.note,
-      paragrafos: props.edit.paragraphs,
       url: props.edit.url
     });
+    if (props.edit.paragraphs && props.edit.paragraphs.length > 0)
+      form.setFieldsValue({ paragrafos: props.edit.paragrafos });
   }, [props.edit]);
 
   return (
@@ -89,21 +90,21 @@ const Edit = (props) => {
             const formData = new FormData();
             for (const item of Object.keys(values))
               formData.append(item, values[item]);
-            if (values.media) {
-              if (values.media[0] && values.media[0] !== 'undefinied')
-                formData.set('media', values.media[0]);
-              else formData.delete('media'); // removing media file when empty field
-            } else formData.delete('media'); // removing media file when empty field
+            // removing media file when empty field
+            if (!values.media) formData.delete('media');
+            else formData.set('media', values.media[0].originFileObj);
             if (!values.url) formData.delete('url'); // removing url when empty field
             if (!values.note) formData.delete('note'); // removing note when empty field
             if (values.paragrafos) {
               // removing paragraphs when empty field
               if (values.paragrafos.length === 0) formData.delete('paragrafos');
               else formData.set('paragrafos', values.paragrafos);
-            }
+            } else formData.delete('paragrafos');
             console.log(
               await axios.put(url, formData, {
-                headers: { 'auth-token': localStorage.getItem('auth-token') }
+                headers: {
+                  'auth-token': localStorage.getItem('auth-token')
+                }
               })
             );
             message.success('¡Se ha editado el componente existosamente!');

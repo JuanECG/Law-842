@@ -503,34 +503,24 @@ module.exports.titleUPDATE = async (req, res) => {
     if (qTitle) {
       qTitle.title = req.body.nombre;
 
-      if (!(!req.file && !req.body.url)) {
+      if (req.body.url) {
         qTitle.url = req.body.url;
-
-        if (qTitle.url && qTitle.media) {
-          const tmpMedia = qTitle.media;
-          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
-            if (err) throw err;
-            console.log('Deleted file by title updated:', tmpMedia.substr(7));
-          });
-          fs.unlink(req.file.path, (err) => {
-            if (err) throw err;
-            console.log('Deleted file by title updated:', req.file.filename);
-          });
-        } else if (req.file && qTitle.media) {
-          const tmpMedia = qTitle.media;
-          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
-            if (err) throw err;
-            console.log('Deleted file by title updated:', tmpMedia.substr(7));
-          });
-        } else if (req.file && qTitle.url) {
-          fs.unlink(req.file.path, (err) => {
-            if (err) throw err;
-            console.log('Deleted file by title updated:', req.file.filename);
-          });
+        if (qTitle.media) {
+          deleteFile(
+            path.join(__dirname, '../../public', qTitle.media),
+            qTitle.media.substr(7)
+          );
+          qTitle.set('media', undefined);
         }
-
-        qTitle.media =
-          req.file && !qTitle.url ? `/media/${req.file.filename}` : undefined;
+        if (req.file) deleteFile(req.file.path, req.file.filename);
+      } else if (req.file) {
+        if (qTitle.media)
+          deleteFile(
+            path.join(__dirname, '../../public', qTitle.media),
+            qTitle.media.substr(7)
+          );
+        qTitle.media = `/media/${req.file.filename}`;
+        if (qTitle.url) qTitle.set('url', undefined);
       }
 
       await qTitle.save();
@@ -557,34 +547,24 @@ module.exports.chapterUPDATE = async (req, res) => {
     if (qChapter) {
       qChapter.title = req.body.nombre;
 
-      if (!(!req.file && !req.body.url)) {
+      if (req.body.url) {
         qChapter.url = req.body.url;
-
-        if (qChapter.url && qChapter.media) {
-          const tmpMedia = qChapter.media;
-          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
-            if (err) throw err;
-            console.log('Deleted file by chapter updated:', tmpMedia.substr(7));
-          });
-          fs.unlink(req.file.path, (err) => {
-            if (err) throw err;
-            console.log('Deleted file by chapter updated:', req.file.filename);
-          });
-        } else if (req.file && qChapter.media) {
-          const tmpMedia = qChapter.media;
-          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
-            if (err) throw err;
-            console.log('Deleted file by chapter updated:', tmpMedia.substr(7));
-          });
-        } else if (req.file && qChapter.url) {
-          fs.unlink(req.file.path, (err) => {
-            if (err) throw err;
-            console.log('Deleted file by chapter updated:', req.file.filename);
-          });
+        if (qChapter.media) {
+          deleteFile(
+            path.join(__dirname, '../../public', qChapter.media),
+            qChapter.media.substr(7)
+          );
+          qChapter.set('media', undefined);
         }
-
-        qChapter.media =
-          req.file && !qChapter.url ? `/media/${req.file.filename}` : undefined;
+        if (req.file) deleteFile(req.file.path, req.file.filename);
+      } else if (req.file) {
+        if (qChapter.media)
+          deleteFile(
+            path.join(__dirname, '../../public', qChapter.media),
+            qChapter.media.substr(7)
+          );
+        qChapter.media = `/media/${req.file.filename}`;
+        if (qChapter.url) qChapter.set('url', undefined);
       }
 
       await qChapter.save();
@@ -612,36 +592,33 @@ module.exports.articleUPDATE = async (req, res) => {
       qArticle.title = req.body.nombre;
       qArticle.content = req.body.cuerpo;
       qArticle.note = req.body.nota;
-      qArticle.paragraphs = req.body.paragrafos;
+      if (req.body.paragrafos) {
+        if (
+          typeof req.body.paragrafos === Array &&
+          req.body.paragrafos.length > 0
+        )
+          qArticle.paragraphs = req.body.paragrafos;
+        else qArticle.paragraphs = req.body.paragrafos.split(',');
+      }
 
-      if (!(!req.file && !req.body.url)) {
+      if (req.body.url) {
         qArticle.url = req.body.url;
-
-        if (qArticle.url && qArticle.media) {
-          const tmpMedia = qArticle.media;
-          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
-            if (err) throw err;
-            console.log('Deleted file by article updated:', tmpMedia.substr(7));
-          });
-          fs.unlink(req.file.path, (err) => {
-            if (err) throw err;
-            console.log('Deleted file by article updated:', req.file.filename);
-          });
-        } else if (req.file && qArticle.media) {
-          const tmpMedia = qArticle.media;
-          fs.unlink(path.join(__dirname, '../../public', tmpMedia), (err) => {
-            if (err) throw err;
-            console.log('Deleted file by article updated:', tmpMedia.substr(7));
-          });
-        } else if (req.file && qArticle.url) {
-          fs.unlink(req.file.path, (err) => {
-            if (err) throw err;
-            console.log('Deleted file by article updated:', req.file.filename);
-          });
+        if (qArticle.media) {
+          deleteFile(
+            path.join(__dirname, '../../public', qArticle.media),
+            qArticle.media.substr(7)
+          );
+          qArticle.set('media', undefined);
         }
-
-        qArticle.media =
-          req.file && !qArticle.url ? `/media/${req.file.filename}` : undefined;
+        if (req.file) deleteFile(req.file.path, req.file.filename);
+      } else if (req.file) {
+        if (qArticle.media)
+          deleteFile(
+            path.join(__dirname, '../../public', qArticle.media),
+            qArticle.media.substr(7)
+          );
+        qArticle.media = `/media/${req.file.filename}`;
+        if (qArticle.url) qArticle.set('url', undefined);
       }
 
       await qArticle.save();
@@ -658,6 +635,13 @@ module.exports.articleUPDATE = async (req, res) => {
     res.status(400).json(err);
   }
 };
+
+function deleteFile(path, filename) {
+  fs.unlink(path, (err) => {
+    if (err) throw err;
+    console.log('Deleted file by element updated:', filename);
+  });
+}
 
 // #endregion
 
