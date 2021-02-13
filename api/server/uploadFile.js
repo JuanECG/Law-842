@@ -26,7 +26,6 @@ const upload = multer({
 
 module.exports = (req, res, next) => {
   upload.single('media')(req, res, (err) => {
-    console.log(req.file);
     if (err instanceof multer.MulterError) {
       return res
         .status(500)

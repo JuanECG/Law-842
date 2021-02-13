@@ -1,6 +1,7 @@
 // Modules
 const mongoose = require('mongoose');
 const fs = require('fs');
+const path = require('path');
 // DB Models
 const Title = require('../models/Title');
 const Chapter = require('../models/Chapter');
@@ -589,6 +590,17 @@ module.exports.titleDELETE = async (req, res) => {
             id += 1;
           }
         } while (title);
+        if (deleted.media)
+          fs.unlink(
+            path.join(__dirname, '../../public', deleted.media),
+            (err) => {
+              if (err) throw err;
+              console.log(
+                'Deleted file by title deleted:',
+                deleted.media.substr(7)
+              );
+            }
+          );
         new Operation({
           _id: new mongoose.Types.ObjectId(),
           type: 'DELETE',
@@ -626,6 +638,17 @@ module.exports.chapterDELETE = async (req, res) => {
             id += 1;
           }
         } while (chapter);
+        if (deleted.media)
+          fs.unlink(
+            path.join(__dirname, '../../public', deleted.media),
+            (err) => {
+              if (err) throw err;
+              console.log(
+                'Deleted file by chapter deleted:',
+                deleted.media.substr(7)
+              );
+            }
+          );
         new Operation({
           _id: new mongoose.Types.ObjectId(),
           type: 'DELETE',
@@ -656,6 +679,17 @@ module.exports.articleDELETE = async (req, res) => {
           id += 1;
         }
       } while (article);
+      if (deleted.media)
+        fs.unlink(
+          path.join(__dirname, '../../public', deleted.media),
+          (err) => {
+            if (err) throw err;
+            console.log(
+              'Deleted file by article deleted:',
+              deleted.media.substr(7)
+            );
+          }
+        );
       new Operation({
         _id: new mongoose.Types.ObjectId(),
         type: 'DELETE',
