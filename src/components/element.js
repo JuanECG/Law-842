@@ -59,6 +59,25 @@ const Element = (props) => {
             </Button>
           )}
 
+          <p>{props.data.content}</p>
+
+          <div className="contentParent" style={{justifyContent:'center'}}>
+            {props.data.media && (
+
+              <Image
+                width={200}
+                style={{  flexGrow: 1, marginLeft: 'auto', 
+                          marginRight: 'auto', marginBottom:'10px' }}
+                src={props.data.media}
+              />
+
+            )}
+            {props.data.url && (
+              <ReactPlayer url={props.data.url} width="420px"
+                height="200px" style={{marginBottom:'10px'}} />
+                // marginLeft="auto" marginRight="auto"
+            )}
+          </div>
           {props.data['child'].map((childData) => (
             <Element
               data={childData}
@@ -67,21 +86,6 @@ const Element = (props) => {
               setDel={props.setDel}
             />
           ))}
-
-          <p>{props.data.content}</p>
-          {props.data.media && (
-
-            <Image
-              width={100}
-              style={{ flexGrow: 1, marginLeft: 'auto', marginRight: 'auto' }}
-              src={props.data.media}
-            />
-
-          )}
-          {props.data.url && (
-            <ReactPlayer url={props.data.url} width="420px"
-              height="300px" marginLeft="auto" marginRight="auto" />
-          )}
 
         </Panel>
       </Collapse>
@@ -117,7 +121,6 @@ const Element = (props) => {
               Editar
             </Button>
           )}
-
           {props.login && (
             <Button
               type="link"
@@ -163,7 +166,7 @@ const Element = (props) => {
             </div>
             {props.data.media && (
               <Image
-                width={100}
+                width={200}
                 style={{ flexGrow: 1 }}
                 src={props.data.media}
               />
