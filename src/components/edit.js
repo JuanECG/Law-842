@@ -108,7 +108,6 @@ const Edit = (props) => {
             form.resetFields();
             setMedia([]);
             props.refresh();
-            props.close();
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
@@ -117,7 +116,7 @@ const Edit = (props) => {
             );
             if (media && media.length === 0)
               return setTimeout(() => window.location.reload(), 1000);
-          });
+          }).finally(props.close());
       }}
       width={800}
     >
