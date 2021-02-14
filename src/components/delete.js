@@ -40,7 +40,7 @@ const Delete = (props) => {
             message.error('¡Error!, el Título tiene elementos hijos');
           } else if (error.response.data === 'Error: Chapter has child') {
             console.log('Error: Capítulo tiene elementos hijos');
-            message.error('¡Error!, el Capítulo stiene elementos hijos');
+            message.error('¡Error!, el Capítulo tiene elementos hijos');
           } else console.log(error.response);
         } finally {
           props.close();

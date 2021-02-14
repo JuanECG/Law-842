@@ -16,6 +16,8 @@ import Log from './components/log';
 import './styles/App.css';
 
 const App = () => {
+  document.title = 'Law 842';
+
   // backend useState variables
   const [data, setData] = useState([]);
 
