@@ -69,7 +69,7 @@ const Edit = (props) => {
       onOk={() => {
         form
           .validateFields()
-          .then(async (values) => {
+          .then((values) => {
             let url;
             switch (props.edit.type) {
               case 'TÍTULO':
@@ -97,17 +97,21 @@ const Edit = (props) => {
               if (values.paragrafos.length === 0) formData.delete('paragrafos');
               else formData.set('paragrafos', values.paragrafos);
             } else formData.delete('paragrafos');
-            console.log(
-              await axios.put(url, formData, {
+            axios
+              .put(url, formData, {
                 headers: {
                   'auth-token': localStorage.getItem('auth-token')
                 }
               })
-            );
-            message.success('¡Se ha editado el componente existosamente!');
-            form.resetFields();
-            setMedia([]);
-            props.refresh();
+              .then((response) => {
+                console.log(response);
+                message.success('¡Se ha editado el componente existosamente!');
+                form.resetFields();
+                setMedia([]);
+                props.refresh();
+                props.close();
+              })
+              .catch((err) => new Error(err));
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
@@ -116,7 +120,8 @@ const Edit = (props) => {
             );
             if (media && media.length === 0)
               return setTimeout(() => window.location.reload(), 1000);
-          }).finally(props.close());
+            props.close();
+          });
       }}
       width={800}
     >
