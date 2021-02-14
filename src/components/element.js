@@ -1,12 +1,10 @@
-import { Button, Collapse, Divider, Image, Typography } from 'antd';
+import { Button, Collapse, Divider, Image } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import ReactPlayer from 'react-player'
+import ReactPlayer from 'react-player';
 import '../styles/Element.css';
 import React from 'react';
 
 const { Panel } = Collapse;
-const { Paragraph } = Typography;
-
 
 const Element = (props) => {
   // if element has any child, render each one of them
@@ -61,21 +59,27 @@ const Element = (props) => {
 
           <p>{props.data.content}</p>
 
-          <div className="contentParent" style={{justifyContent:'center'}}>
+          <div className="contentParent" style={{ justifyContent: 'center' }}>
             {props.data.media && (
-
               <Image
                 width={200}
-                style={{  flexGrow: 1, marginLeft: 'auto', 
-                          marginRight: 'auto', marginBottom:'10px' }}
+                style={{
+                  flexGrow: 1,
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  marginBottom: '10px'
+                }}
                 src={props.data.media}
               />
-
             )}
             {props.data.url && (
-              <ReactPlayer url={props.data.url} width="420px"
-                height="200px" style={{marginBottom:'10px'}} />
-                // marginLeft="auto" marginRight="auto"
+              <ReactPlayer
+                url={props.data.url}
+                width="420px"
+                height="200px"
+                style={{ marginBottom: '10px' }}
+              />
+              // marginLeft="auto" marginRight="auto"
             )}
           </div>
           {props.data['child'].map((childData) => (
@@ -86,7 +90,6 @@ const Element = (props) => {
               setDel={props.setDel}
             />
           ))}
-
         </Panel>
       </Collapse>
     );

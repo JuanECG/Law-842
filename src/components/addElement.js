@@ -1,4 +1,13 @@
-import { Form, Radio, Upload, Input, Modal, Select, Button, message } from 'antd';
+import {
+  Form,
+  Radio,
+  Upload,
+  Input,
+  Modal,
+  Select,
+  Button,
+  message
+} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import React from 'react';
@@ -89,7 +98,7 @@ const AddElement = (props) => {
           .catch((info) => {
             // add alert
             console.log('Validate Failed:', info);
-            message.error('¡Error!, el elemento tiene elementos hijos')
+            message.error('¡Error!, el elemento tiene elementos hijos');
           });
       }}
     >

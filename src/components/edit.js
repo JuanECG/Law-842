@@ -40,25 +40,22 @@ const Edit = (props) => {
     showUploadList: {
       showDownloadIcon: false
     },
-    onRemove: () => {
-      setMedia([]);
-    },
-    beforeUpload: (file) => {
-      setMedia([file]);
+    beforeUpload: () => {
       return false;
     },
     media
   };
 
   useEffect(() => {
-    form.setFieldsValue({
+    const editValues = {
       nombre: props.edit.title,
       cuerpo: props.edit.content,
       nota: props.edit.note,
       url: props.edit.url
-    });
+    };
     if (props.edit.paragraphs && props.edit.paragraphs.length > 0)
-      form.setFieldsValue({ paragrafos: props.edit.paragrafos });
+      editValues.paragrafos = props.edit.paragraphs;
+    form.setFieldsValue(editValues);
   }, [props.edit]);
 
   return (
@@ -115,6 +112,11 @@ const Edit = (props) => {
           })
           .catch((info) => {
             console.log('Validate Failed:', info);
+            message.error(
+              'Error al actualizar el elemento, por favor revise los campos'
+            );
+            if (media && media.length === 0)
+              return setTimeout(() => window.location.reload(), 1000);
           });
       }}
       width={800}

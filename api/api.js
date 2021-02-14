@@ -31,6 +31,9 @@ app.use('/api/user', userRoutes);
 app.use('/api/report', reportRoutes);
 app.use('/api/statistic', statisticRoutes);
 
+// Serve build front App
+app.use('/', express.static(path.join(__dirname, '../build')));
+
 app.listen(process.env.API_PORT, () => {
   console.log('Running API on port:', process.env.API_PORT);
 });

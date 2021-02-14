@@ -599,7 +599,7 @@ module.exports.articleUPDATE = async (req, res) => {
         )
           qArticle.paragraphs = req.body.paragrafos;
         else qArticle.paragraphs = req.body.paragrafos.split(',');
-      }
+      } else qArticle.set('paragraphs', undefined);
 
       if (req.body.url) {
         qArticle.url = req.body.url;
