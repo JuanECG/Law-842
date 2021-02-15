@@ -101,7 +101,7 @@ const Statsitics = (props) => {
     );
     for (const item of Object.keys(titlesArray)) {
       const title = fullTitles.find((title) => title._id === item);
-      titlesArray[item].name = title.title;
+      if (title) titlesArray[item].name = title.title;
     }
     const titlesNames = [];
     const titlesCounts = [];
@@ -160,7 +160,7 @@ const Statsitics = (props) => {
     );
     for (const item of Object.keys(chaptersArray)) {
       const chapter = fullChapters.find((chapter) => chapter._id === item);
-      chaptersArray[item].name = chapter.title;
+      if (chapter) chaptersArray[item].name = chapter.title;
     }
     const chaptersNames = [];
     const chaptersCounts = [];
